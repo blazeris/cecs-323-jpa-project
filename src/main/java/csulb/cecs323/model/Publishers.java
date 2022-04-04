@@ -17,7 +17,19 @@ import java.util.Objects;
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames =
         {"name", "email", "phone"})})
-
+@NamedNativeQuery(
+        name = "ReturnPublishers",
+        query = "SELECT * " +
+                "FROM PUBLISHERS ",
+        resultClass = Publishers.class
+)
+@NamedNativeQuery(
+        name = "ReturnPublisher",
+        query = "SELECT * " +
+                "FROM PUBLISHERS " +
+                "WHERE NAME = ? ",
+        resultClass = Publishers.class
+)
 public class Publishers {
     // The name of the publisher
     @Id

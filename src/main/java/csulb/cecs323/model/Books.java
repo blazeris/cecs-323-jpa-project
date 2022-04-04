@@ -9,8 +9,8 @@ import java.io.Serializable;
  */
 @Entity
 @Table(uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"title", "publisher"}),
-        @UniqueConstraint(columnNames = {"title", "authoringEntity"})
+        @UniqueConstraint(columnNames = {"title", "AUTHORING_ENTITY_NAME"}),
+        @UniqueConstraint(columnNames = {"title", "PUBLISHER_NAME"})
 })
 public class Books implements Serializable {
 
@@ -28,12 +28,14 @@ public class Books implements Serializable {
     private int yearPublished;
 
     // The author entity of the book
-    @Column(nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "AUTHORING_ENTITY_NAME")
     private AuthoringEntities authoringEntity;
 
     // The group that published the book
-    @Column(nullable = false)
-    private Publisher publisher;
+    @OneToOne
+    @JoinColumn(name = "PUBLISHER_NAME")
+    private Publishers publisher;
 
     /**
      * Null constructor
@@ -50,7 +52,7 @@ public class Books implements Serializable {
      * @param authoringEntity
      * @param publisher
      */
-    public Books(String ISBN, String title, int yearPublished, AuthoringEntities authoringEntity, Publisher publisher){
+    public Books(String ISBN, String title, int yearPublished, AuthoringEntities authoringEntity, Publishers publisher){
         this.ISBN = ISBN;
         this.title = title;
         this.yearPublished = yearPublished;
@@ -74,7 +76,7 @@ public class Books implements Serializable {
         return authoringEntity;
     }
 
-    public Publisher getPublisher() {
+    public Publishers getPublisher() {
         return publisher;
     }
 
@@ -94,7 +96,7 @@ public class Books implements Serializable {
         this.authoringEntity = authoringEntity;
     }
 
-    public void setPublisher(Publisher publisher){
+    public void setPublisher(Publishers publisher){
         this.publisher = publisher;
     }
 
