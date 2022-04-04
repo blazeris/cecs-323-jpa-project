@@ -17,7 +17,7 @@ public class AdHocTeamMembers {
 
     }
 /*
- *
+ *Arguments constructor
  *@param name
  *@param email
  */
