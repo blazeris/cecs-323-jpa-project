@@ -15,6 +15,8 @@ package csulb.cecs323.app;
 
 // Import all of the entity classes that we have written for this application.
 import csulb.cecs323.model.*;
+import org.eclipse.persistence.exceptions.DatabaseException;
+
 import java.util.Scanner;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -74,17 +76,16 @@ public class BooksProject {
       LOGGER.fine("Begin of Transaction");
       EntityTransaction tx = manager.getTransaction();
 
-      Books book = booksProject.promptBook();
-      if(book != null){
-         tx.begin();
-         try{
-            booksProject.createEntity(book);
-         }
-         catch(Exception e){
-            System.out.println(e);
-         }
-         tx.commit();
-      }
+      tx.begin();
+      booksProject.createEntity(new AuthoringEntities("tree@gmail.com", "the good type", "mr. washington", "the american books", 1776));
+      booksProject.createEntity(new Publishers("canada publishing", "canada@gmail.com", "123-456-7089"));
+      tx.commit();
+
+      booksProject.createBook(tx);
+      booksProject.createBook(tx);
+
+      Scanner in = new Scanner(System.in);
+      String wait = in.nextLine();
 
       LOGGER.fine("End of Transaction");
 
@@ -145,7 +146,7 @@ public class BooksProject {
          List<AuthoringEntities> authoringEntities = getAuthoringEntities();
          if(authoringEntities != null){
             for(int i = 1; i <= authoringEntities.size(); i++){
-               System.out.printf("%s. %s\n", i, authoringEntities.get(i));
+               System.out.printf("%s. %s\n", i, authoringEntities.get(i - 1));
             }
             String userInput = in.nextLine();
             try{
@@ -176,7 +177,7 @@ public class BooksProject {
          List<Publishers> publishers = getPublishers();
          if(publishers != null){
             for(int i = 1; i <= publishers.size(); i++){
-               System.out.printf("%s. %s\n", i, publishers.get(i));
+               System.out.printf("%s. %s\n", i, publishers.get(i - 1));
             }
             String userInput = in.nextLine();
             try{
@@ -223,7 +224,6 @@ public class BooksProject {
             }
          }
 
-
          AuthoringEntities authoringEntity = selectAuthoringEntity();
          if(authoringEntity == null){
             inputPossible = false;
@@ -235,10 +235,35 @@ public class BooksProject {
             }
             else {
                book = new Books(ISBN, title, yearPublished, authoringEntity, publisher);
+               inputValid = true;
             }
          }
       }
       return book;
+   }
+
+   public void createBook(EntityTransaction tx){
+      boolean bookValid = false;
+      while(!bookValid){
+         Books book = this.promptBook();
+         if(book != null){
+            tx.begin();
+            try{
+               this.createEntity(book);
+               tx.commit();
+               bookValid = true;
+            }
+            catch(DatabaseException e){
+               System.out.println("This already exists in the database! Try again!");
+               tx.rollback();
+            }
+         }
+         else {
+            System.out.println("Either no publishers or authoring entities exist, impossible to make book.");
+            bookValid = true;
+         }
+      }
+
    }
 }
 
