@@ -22,6 +22,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Logger;
 
 /**
@@ -112,6 +113,8 @@ public class BooksProject {
       }
    } // End of createEntity member method
 
+
+
    public <E> void createEntity(E entity){
       LOGGER.info("Persisting: " + entity);
       this.entityManager.persist(entity);
@@ -197,6 +200,24 @@ public class BooksProject {
       }
       return publisher;
    }
+   public AuthoringEntities promptAuthoringEntity(){
+      Scanner in = new Scanner(System.in);
+      AuthoringEntities authoringentity = null;
+      System.out.println("Please enter the authoringEntity's email: ");
+      String email = in.nextLine();
+      System.out.println("Please enter the authoringEntity's name: ");
+      String name = in.nextLine();
+      System.out.println("Please enter the authoringEntity's headWriter: ");
+      String headWriter = in.nextLine();
+      System.out.println("Please enter the authoringEntity's year of formation: ");
+      String yearFormed = in.nextLine();
+      System.out.println("Please enter the authoringEntity's type: ");
+      String AuthoringEntityType = in.nextLine();
+      authoringentity = new AuthoringEntities (email,name,headWriter,yearFormed,AuthoringEntityType);
+      return authoringentity;
+   }
+
+
 
    public Books promptBook(){
       Scanner in = new Scanner(System.in);
