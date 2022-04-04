@@ -29,7 +29,7 @@ public class Books implements Serializable {
 
     // The author entity of the book
     @Column(nullable = false)
-    private AuthoringEntity authoringEntity;
+    private AuthoringEntities authoringEntity;
 
     // The group that published the book
     @Column(nullable = false)
@@ -50,7 +50,7 @@ public class Books implements Serializable {
      * @param authoringEntity
      * @param publisher
      */
-    public Books(String ISBN, String title, int yearPublished, AuthoringEntity authoringEntity, Publisher publisher){
+    public Books(String ISBN, String title, int yearPublished, AuthoringEntities authoringEntity, Publisher publisher){
         this.ISBN = ISBN;
         this.title = title;
         this.yearPublished = yearPublished;
@@ -70,7 +70,7 @@ public class Books implements Serializable {
         return yearPublished;
     }
 
-    public AuthoringEntity getAuthoringEntity() {
+    public AuthoringEntities getAuthoringEntity() {
         return authoringEntity;
     }
 
@@ -90,7 +90,7 @@ public class Books implements Serializable {
         this.yearPublished = yearPublished;
     }
 
-    public void setAuthoringEntity(AuthoringEntity authoringEntity){
+    public void setAuthoringEntity(AuthoringEntities authoringEntity){
         this.authoringEntity = authoringEntity;
     }
 
