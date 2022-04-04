@@ -122,6 +122,37 @@ public class BooksProject {
       LOGGER.info("Persisted object after flush (non-null id): " + entity);
    }
 
+   public AuthoringEntities promptAuthoringEntity(){
+      Scanner in = new Scanner(System.in);
+      AuthoringEntities authoringEntity = null;
+      System.out.println("Please enter the authoringEntity's email: ");
+      String email = in.nextLine();
+      System.out.println("Please enter the authoringEntity's name: ");
+      String name = in.nextLine();
+      System.out.println("Please enter the authoringEntity's headWriter: ");
+      String headWriter = in.nextLine();
+      System.out.println("Please enter the authoringEntity's year of formation: ");
+      String userInput = in.nextLine();
+      int yearFormed = Integer.parseInt(userInput);
+      System.out.println("Please enter the authoringEntity's type: ");
+      String authoringEntityType = in.nextLine();
+      authoringEntity = new AuthoringEntities(email, authoringEntityType, headWriter, name, yearFormed);
+      return authoringEntity;
+   }
+
+   public Publishers promptPublisher(){
+      Scanner in = new Scanner(System.in);
+      Publishers publisher = null;
+      System.out.println("Please enter the publisher's name: ");
+      String name = in.nextLine();
+      System.out.println("Please enter the publisher's email: ");
+      String email = in.nextLine();
+      System.out.println("Please enter the publisher's phone number: ");
+      String phone = in.nextLine();
+      publisher = new Publishers(name, email, phone);
+      return publisher;
+   }
+
    public List<AuthoringEntities> getAuthoringEntities(){
       List<AuthoringEntities> authoringEntities = this.entityManager.createNamedQuery("ReturnAuthoringEntities",
               AuthoringEntities.class).getResultList();
@@ -201,24 +232,6 @@ public class BooksProject {
       }
       return publisher;
    }
-   public AuthoringEntities promptAuthoringEntity(){
-      Scanner in = new Scanner(System.in);
-      AuthoringEntities authoringentity = null;
-      System.out.println("Please enter the authoringEntity's email: ");
-      String email = in.nextLine();
-      System.out.println("Please enter the authoringEntity's name: ");
-      String name = in.nextLine();
-      System.out.println("Please enter the authoringEntity's headWriter: ");
-      String headWriter = in.nextLine();
-      System.out.println("Please enter the authoringEntity's year of formation: ");
-      String yearFormed = in.nextLine();
-      System.out.println("Please enter the authoringEntity's type: ");
-      String AuthoringEntityType = in.nextLine();
-      authoringentity = new AuthoringEntities (email,name,headWriter,yearFormed,AuthoringEntityType);
-      return authoringentity;
-   }
-
-
 
    public Books promptBook(){
       Scanner in = new Scanner(System.in);
