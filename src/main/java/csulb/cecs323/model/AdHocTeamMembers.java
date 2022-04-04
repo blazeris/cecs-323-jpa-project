@@ -1,6 +1,8 @@
 package csulb.cecs323.model;
 import javax.persistence.*;
 import java.util.Objects;
+@Entity
+@Table(name = "AD_HOC_TEAM_MEMBERS")
 public class AdHocTeamMembers {
     //name that uniquely identifies the member
     @Id

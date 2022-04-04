@@ -52,7 +52,8 @@ public class BooksProject {
    /**
     * The constructor for the CarClub class.  All that it does is stash the provided EntityManager
     * for use later in the application.
-    * @param manager    The EntityManager that we will use.
+    *
+    * @param manager The EntityManager that we will use.
     */
    public BooksProject(EntityManager manager) {
       this.entityManager = manager;
@@ -82,11 +83,12 @@ public class BooksProject {
 
    /**
     * Create and persist a list of objects to the database.
-    * @param entities   The list of entities to persist.  These can be any object that has been
-    *                   properly annotated in JPA and marked as "persistable."  I specifically
-    *                   used a Java generic so that I did not have to write this over and over.
+    *
+    * @param entities The list of entities to persist.  These can be any object that has been
+    *                 properly annotated in JPA and marked as "persistable."  I specifically
+    *                 used a Java generic so that I did not have to write this over and over.
     */
-   public <E> void createEntity(List <E> entities) {
+   public <E> void createEntity(List<E> entities) {
       for (E next : entities) {
          LOGGER.info("Persisting: " + next);
          // Use the CarClub entityManager instance variable to get our EntityManager.
@@ -100,4 +102,13 @@ public class BooksProject {
          LOGGER.info("Persisted object after flush (non-null id): " + next);
       }
    } // End of createEntity member method
+
+   public <E> void createEntity(E entity){
+      LOGGER.info("Persisting: " + entity);
+      this.entityManager.persist(entity);
+      LOGGER.info("Persisted object after flush (non-null id): " + entity);
+   }
+
+   
+}
 
