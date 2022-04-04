@@ -4,13 +4,13 @@ import java.util.Objects;
 @Entity
 @Table(name = "AD_HOC_TEAM_MEMBERS")
 public class AdHocTeamMembers {
-    //name that uniquely identifies the member
+    //individual authors email
     @Id
     @Column(nullable=false, length = 30)
-    private String name;
+    private String IndividualAuthorsEmail;
     //email of the member
     @Column(nullable = false, length = 50)
-    private String email;
+    private String AdHocTeamsEmail;
 
     /**
      * Null constructor
@@ -20,25 +20,25 @@ public class AdHocTeamMembers {
     }
 /*
  *Arguments constructor
- *@param name
- *@param email
+ *@param IndividualAuthorsEmail
+ *@param AdHocTeamsEmail
  */
     public AdHocTeamMembers(String name, String email){
-    this.name = name;
-    this.email = email;
+    this.IndividualAuthorsEmail = IndividualAuthorsEmail;
+    this.AdHocTeamsEmail = AdHocTeamsEmail;
     }
 
-    public String getName(){
-        return name;
+    public String getIndividualAuthorsEmail(){
+        return IndividualAuthorsEmail;
     }
-    public String getEmail(){
-        return email;
+    public String getAdHocTeamsEmail(){
+        return AdHocTeamsEmail;
     }
-    public void setName(String name){
-        this.name=name;
+    public void setIndividualAuthorsEmail(String IndividualAuthorsEmail){
+        this.IndividualAuthorsEmail=IndividualAuthorsEmail;
     }
-    public void setEmail(String email){
-        this.email=email;
+    public void setAdHocTeamsEmail(String email){
+        this.AdHocTeamsEmail=AdHocTeamsEmail;
     }
     /**
      * toString function for members
@@ -46,24 +46,24 @@ public class AdHocTeamMembers {
      */
     @Override
     public String toString () {
-        return "Member's name " + this.name + "\tEmail: " + this.email;
+        return "Member's name " + this.IndividualAuthorsEmail + "\tEmail: " + this.AdHocTeamsEmail;
     }
     /**
      * Function to check if name equals the object passed
      * @param o Object which is passed in to check if it equals
-     * @return the name which equals the object passed
+     * @return the IndividualAuthorsEmail which equals the object passed
      */
     @Override
     public boolean equals (Object o) {
         AdHocTeamMembers Members = (AdHocTeamMembers) o;
-        return this.getName() == Members.getName();
+        return this.getIndividualAuthorsEmail() == Members.getIndividualAuthorsEmail();
     }
     /**
-     * Hash function to map members name
+     * Hash function to map IndividualAuthorsEmail
      * @return hash map
      */
     @Override
     public int hashCode() {
-        return Objects.hash(this.getName());
+        return Objects.hash(this.getIndividualAuthorsEmail());
     }
 }
