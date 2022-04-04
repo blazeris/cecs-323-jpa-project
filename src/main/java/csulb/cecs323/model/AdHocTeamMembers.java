@@ -1,8 +1,8 @@
 package csulb.cecs323.model;
 import javax.persistence.*;
 import java.util.Objects;
-public class Ad_Hoc_Team_Members {
-    //name that inquely identifies the menber
+public class AdHocTeamMembers {
+    //name that uniquely identifies the member
     @Id
     @Column(nullable=false, length = 30)
     private String name;
@@ -13,7 +13,7 @@ public class Ad_Hoc_Team_Members {
     /**
      * Null constructor
      */
-    public Ad_Hoc_Team_Members(){
+    public AdHocTeamMembers(){
 
     }
 /*
@@ -21,7 +21,7 @@ public class Ad_Hoc_Team_Members {
  *@param name
  *@param email
  */
-    public Ad_Hoc_Team_Members(String name, String email){
+    public AdHocTeamMembers(String name, String email){
     this.name = name;
     this.email = email;
     }
@@ -53,7 +53,7 @@ public class Ad_Hoc_Team_Members {
      */
     @Override
     public boolean equals (Object o) {
-        Ad_Hoc_Team_Members Members = (Ad_Hoc_Team_Members) o;
+        AdHocTeamMembers Members = (AdHocTeamMembers) o;
         return this.getName() == Members.getName();
     }
     /**
