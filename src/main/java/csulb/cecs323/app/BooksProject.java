@@ -12,9 +12,10 @@
 
 package csulb.cecs323.app;
 
+
 // Import all of the entity classes that we have written for this application.
 import csulb.cecs323.model.*;
-
+import java.util.Scanner;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -73,10 +74,18 @@ public class BooksProject {
       LOGGER.fine("Begin of Transaction");
       EntityTransaction tx = manager.getTransaction();
 
-      tx.begin();
+      Books book = booksProject.promptBook();
+      if(book != null){
+         tx.begin();
+         try{
+            booksProject.createEntity(book);
+         }
+         catch(Exception e){
+            System.out.println(e);
+         }
+         tx.commit();
+      }
 
-      // Commit the changes so that the new data persists and is visible to other users.
-      tx.commit();
       LOGGER.fine("End of Transaction");
 
    } // End of the main method
@@ -109,6 +118,127 @@ public class BooksProject {
       LOGGER.info("Persisted object after flush (non-null id): " + entity);
    }
 
-   
+   public List<AuthoringEntities> getAuthoringEntities(){
+      List<AuthoringEntities> authoringEntities = this.entityManager.createNamedQuery("ReturnAuthoringEntities",
+              AuthoringEntities.class).getResultList();
+      if(authoringEntities.size() == 0){
+         authoringEntities = null;
+      }
+      return authoringEntities;
+   }
+
+   public List<Publishers> getPublishers(){
+      List<Publishers> publishers = this.entityManager.createNamedQuery("ReturnPublishers",
+              Publishers.class).getResultList();
+      if(publishers.size() == 0){
+         publishers = null;
+      }
+      return publishers;
+   }
+
+   public AuthoringEntities selectAuthoringEntity(){
+      Scanner in = new Scanner(System.in);
+      AuthoringEntities authoringEntity = null;
+      boolean authoringEntityValid = false;
+      while(!authoringEntityValid){
+         System.out.println("Select the number of the corresponding authoring entity");
+         List<AuthoringEntities> authoringEntities = getAuthoringEntities();
+         if(authoringEntities != null){
+            for(int i = 1; i <= authoringEntities.size(); i++){
+               System.out.printf("%s. %s\n", i, authoringEntities.get(i));
+            }
+            String userInput = in.nextLine();
+            try{
+               int authoringEntitySelection = Integer.parseInt(userInput);
+               if(authoringEntitySelection > 0 && authoringEntitySelection <= authoringEntities.size()){
+                  authoringEntity = authoringEntities.get(authoringEntitySelection - 1);
+                  authoringEntityValid = true;
+               }
+            }
+            catch(Exception e){
+               System.out.println("Invalid user input. Try again");
+            }
+         }
+         else {
+            System.out.println("No authoring entities exist. Authoring entity required to select book.");
+            authoringEntityValid = true; // Finish while loop, returning null since an authoring entity is impossible to select
+         }
+      }
+      return authoringEntity;
+   }
+
+   public Publishers selectPublisher(){
+      Scanner in = new Scanner(System.in);
+      Publishers publisher = null;
+      boolean publisherValid = false;
+      while(!publisherValid){
+         System.out.println("Select the number of the corresponding publisher");
+         List<Publishers> publishers = getPublishers();
+         if(publishers != null){
+            for(int i = 1; i <= publishers.size(); i++){
+               System.out.printf("%s. %s\n", i, publishers.get(i));
+            }
+            String userInput = in.nextLine();
+            try{
+               int publisherSelection = Integer.parseInt(userInput);
+               if(publisherSelection > 0 && publisherSelection <= publishers.size()){
+                  publisher = publishers.get(publisherSelection - 1);
+                  publisherValid = true;
+               }
+            }
+            catch(Exception e){
+               System.out.println("Invalid user input. Try again");
+            }
+         }
+         else {
+            System.out.println("No publisher exist. Publisher required to select book.");
+            publisherValid = true; // Finish while loop, returning null since an authoring entity is impossible to select
+         }
+      }
+      return publisher;
+   }
+
+   public Books promptBook(){
+      Scanner in = new Scanner(System.in);
+      Books book = null;
+      boolean inputValid = false;
+      boolean inputPossible = true;
+      while(!inputValid && inputPossible){
+         System.out.println("What is the book's ISBN?");
+         String ISBN = in.nextLine();
+         System.out.println("What is the book's title?");
+         String title = in.nextLine();
+
+         boolean yearPublishedValid = false;
+         int yearPublished = 0;
+         while(!yearPublishedValid){
+            System.out.println("What year was the book published?");
+            String userInput = in.nextLine();
+            try{
+               yearPublished = Integer.parseInt(userInput);
+               yearPublishedValid = true;
+            }
+            catch (Exception e){
+               System.out.println("Invalid year published, try again.");
+            }
+         }
+
+
+         AuthoringEntities authoringEntity = selectAuthoringEntity();
+         if(authoringEntity == null){
+            inputPossible = false;
+         }
+         else {
+            Publishers publisher = selectPublisher();
+            if(publisher == null){
+               inputPossible = false;
+            }
+            else {
+               book = new Books(ISBN, title, yearPublished, authoringEntity, publisher);
+            }
+         }
+      }
+      return book;
+   }
 }
 

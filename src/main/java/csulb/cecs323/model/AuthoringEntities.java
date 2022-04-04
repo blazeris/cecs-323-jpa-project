@@ -19,7 +19,12 @@ import java.util.Objects;
         uniqueConstraints = {
             @UniqueConstraint(name = "authoring_entities_unique_01", columnNames = {"name", "email"})
 })
-
+@NamedNativeQuery(
+        name = "ReturnAuthoringEntities",
+        query = "SELECT * " +
+                "FROM AUTHORING_ENTITIES ",
+        resultClass = AuthoringEntities.class
+)
 public class AuthoringEntities {
     // The email associated with the authoring entity
     @Id
