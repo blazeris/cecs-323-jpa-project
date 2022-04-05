@@ -88,10 +88,7 @@ public class Publishers {
     public void setPhone(String phone) {
         this.phone = phone;
     }
-    @Override
-    public String tString () {
-        return name;
-    }
+
     @Override
     public boolean equals(Object o){
         boolean results = false;
@@ -106,10 +103,12 @@ public class Publishers {
         }
         return results;
     }
+
+    @Override
     public String toString() {
-        return "The name of the publisher is:" + name + ", "
-                + "the email of the publisher is:" + email + ", "
-                + "finally the phone number of the publisher is:"
+        return "The name of the publisher is: " + name + ", "
+                + "the email of the publisher is: " + email + ", "
+                + "finally the phone number of the publisher is: "
                 + phone ;
     }
     @Override

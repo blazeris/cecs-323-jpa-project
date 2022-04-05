@@ -15,6 +15,7 @@ package csulb.cecs323.app;
 
 // Import all of the entity classes that we have written for this application.
 import csulb.cecs323.model.*;
+import org.apache.derby.iapi.db.Database;
 import org.eclipse.persistence.exceptions.DatabaseException;
 
 import java.util.Scanner;
@@ -22,9 +23,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.logging.Logger;
 
 /**
@@ -74,9 +73,10 @@ public class BooksProject {
       // Any changes to the database need to be done within a transaction.
       // See: https://en.wikibooks.org/wiki/Java_Persistence/Transactions
 
-      LOGGER.fine("Begin of Transaction");
+
       EntityTransaction tx = manager.getTransaction();
 
+      // Insert example data
       tx.begin();
       AuthoringEntities ae = new AuthoringEntities("tree@gmail.com", "the good type", "mr. washington", "the american books", 1776);
       Publishers p = new Publishers("canada publishing", "canada@gmail.com", "123-456-7089");
@@ -85,7 +85,7 @@ public class BooksProject {
       booksProject.createEntity(new Books("isbn", "good title", 2022, ae, p));
       tx.commit();
 
-
+      booksProject.deleteBook(manager);
 
       booksProject.createBook(tx);
       booksProject.createBook(tx);
@@ -93,7 +93,6 @@ public class BooksProject {
       Scanner in = new Scanner(System.in);
       String wait = in.nextLine();
 
-      LOGGER.fine("End of Transaction");
 
    } // End of the main method
 
@@ -125,6 +124,27 @@ public class BooksProject {
       LOGGER.info("Persisting: " + entity);
       this.entityManager.persist(entity);
       LOGGER.info("Persisted object after flush (non-null id): " + entity);
+   }
+
+   public void promptAction(){
+       Scanner in = new Scanner(System.in);
+
+   }
+
+   public void promptAdd(){
+
+   }
+
+   public void promptList(){
+
+   }
+
+   public void promptDeleteBook(){
+
+   }
+
+   public void promptUpdateBook(){
+
    }
 
    public AuthoringEntities promptAuthoringEntity(){
@@ -195,14 +215,22 @@ public class BooksProject {
     }
 
     public Books getBook(String ISBN){
-        List<Books> books = this.entityManager.createNamedQuery("ReturnBook",
-                Books.class).setParameter(1, ISBN).getResultList();
-        if(books.size() == 0){
-            books = null;
-        }
-        return books.get(0);
-    }
+      List<Books> books = this.entityManager.createNamedQuery("ReturnBook",
+              Books.class).setParameter(1, ISBN).getResultList();
+      if(books.size() == 0){
+         books = null;
+      }
+      return books.get(0);
+   }
 
+   public List<Books> getBooks(){
+      List<Books> books = this.entityManager.createNamedQuery("ReturnBooks",
+              Books.class).getResultList();
+      if(books.size() == 0){
+         books = null;
+      }
+      return books;
+   }
 
    public AuthoringEntities selectAuthoringEntity(){
       Scanner in = new Scanner(System.in);
@@ -309,8 +337,6 @@ public class BooksProject {
       return book;
    }
 
-   public
-
    public void createBook(EntityTransaction tx){
       boolean bookValid = false;
       while(!bookValid){
@@ -333,6 +359,70 @@ public class BooksProject {
          }
       }
 
+   }
+
+
+   public Books selectBooks(){
+      Scanner in = new Scanner(System.in);
+      Books book = null;
+      boolean bookValid = false;
+      while(!bookValid){
+         System.out.println("Select the number of the corresponding book");
+         List<Books> books = getBooks();
+         if(books != null){
+            for(int i = 1; i <= books.size(); i++){
+               System.out.printf("%s. %s\n", i, books.get(i - 1));
+            }
+            String userInput = in.nextLine();
+            try{
+               int bookSelection = Integer.parseInt(userInput);
+               if(bookSelection > 0 && bookSelection <= books.size()){
+                  book = books.get(bookSelection - 1);
+                  bookValid = true;
+               }
+            }
+            catch(Exception e){
+               System.out.println("Invalid user input. Try again");
+            }
+         }
+         else {
+            System.out.println("No publisher exist. Publisher required to select book.");
+            bookValid = true; // Finish while loop, returning null since an authoring entity is impossible to select
+         }
+      }
+      return book;
+   }
+
+
+
+   public void deleteBook(EntityManager em){
+      Scanner in = new Scanner(System.in);
+      boolean inputValid = false;
+      boolean inputPossible = true;
+      while(!inputValid && inputPossible){
+         System.out.println("What is the book's ISBN?");
+         String ISBN = in.nextLine();
+         System.out.println("What is the book's title?");
+         String title = in.nextLine();
+         AuthoringEntities authoringEntity = selectAuthoringEntity();
+         if(authoringEntity == null){
+            inputPossible = false;
+         }
+         else {
+            Publishers publisher = selectPublisher();
+            if(publisher == null){
+               inputPossible = false;
+            }
+            else {
+               try{
+
+               }
+               catch(DatabaseException e){
+                  System.out.println("That book was not found!");
+               }
+               inputValid = true;
+            }
+         }
    }
 }
 
