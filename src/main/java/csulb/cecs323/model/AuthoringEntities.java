@@ -40,11 +40,11 @@ public class AuthoringEntities {
     private String name;
 
     // The head writer of the authoring entity
-    @Column(nullable = false, length = 80)   
+    @Column(length = 80)
     private String headWriter;
 
     // The year that the authoring entity was formed
-    @Column(nullable = false)   
+    @Column()
     private int yearFormed;
 
    
@@ -53,11 +53,24 @@ public class AuthoringEntities {
     */
     public AuthoringEntities() {
 
-    } 
+    }
 
-  
     /**
-     * Arguments constructor
+     * Authoring Entity constructor
+     * @param email
+     * @param authoringEntityType
+     * @param name
+     */
+    public AuthoringEntities (String email, String authoringEntityType, String name) {
+        this.email = email;
+        this.authoringEntityType = authoringEntityType;
+        this.name = name;
+        this.headWriter = null;
+        this.yearFormed = 0;
+    }
+
+    /**
+     * Writing group constructor
      * @param email
      * @param authoringEntityType
      * @param name
@@ -118,6 +131,7 @@ public class AuthoringEntities {
     public String toString () {
         return email;
     }
+
     @Override
     public boolean equals(Object o){
         boolean results = false;

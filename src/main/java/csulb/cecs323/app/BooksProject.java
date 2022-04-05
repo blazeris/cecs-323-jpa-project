@@ -78,9 +78,14 @@ public class BooksProject {
       EntityTransaction tx = manager.getTransaction();
 
       tx.begin();
-      booksProject.createEntity(new AuthoringEntities("tree@gmail.com", "the good type", "mr. washington", "the american books", 1776));
-      booksProject.createEntity(new Publishers("canada publishing", "canada@gmail.com", "123-456-7089"));
+      AuthoringEntities ae = new AuthoringEntities("tree@gmail.com", "the good type", "mr. washington", "the american books", 1776);
+      Publishers p = new Publishers("canada publishing", "canada@gmail.com", "123-456-7089");
+      booksProject.createEntity(ae);
+      booksProject.createEntity(p);
+      booksProject.createEntity(new Books("isbn", "good title", 2022, ae, p));
       tx.commit();
+
+
 
       booksProject.createBook(tx);
       booksProject.createBook(tx);
@@ -162,6 +167,15 @@ public class BooksProject {
       return authoringEntities;
    }
 
+    public AuthoringEntities getAuthoringEntity(String email){
+        List<AuthoringEntities> authoringEntities = this.entityManager.createNamedQuery("ReturnAuthoringEntity",
+                AuthoringEntities.class).setParameter(1, email).getResultList();
+        if(authoringEntities.size() == 0){
+            authoringEntities = null;
+        }
+        return authoringEntities.get(0);
+    }
+
    public List<Publishers> getPublishers(){
       List<Publishers> publishers = this.entityManager.createNamedQuery("ReturnPublishers",
               Publishers.class).getResultList();
@@ -170,6 +184,25 @@ public class BooksProject {
       }
       return publishers;
    }
+
+    public Publishers getPublisher(String name){
+        List<Publishers> publishers = this.entityManager.createNamedQuery("ReturnPublisher",
+                Publishers.class).setParameter(1, name).getResultList();
+        if(publishers.size() == 0){
+            publishers = null;
+        }
+        return publishers.get(0);
+    }
+
+    public Books getBook(String ISBN){
+        List<Books> books = this.entityManager.createNamedQuery("ReturnBook",
+                Books.class).setParameter(1, ISBN).getResultList();
+        if(books.size() == 0){
+            books = null;
+        }
+        return books.get(0);
+    }
+
 
    public AuthoringEntities selectAuthoringEntity(){
       Scanner in = new Scanner(System.in);
@@ -275,6 +308,8 @@ public class BooksProject {
       }
       return book;
    }
+
+   public
 
    public void createBook(EntityTransaction tx){
       boolean bookValid = false;
