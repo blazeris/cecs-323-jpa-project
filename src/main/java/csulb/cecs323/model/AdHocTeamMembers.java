@@ -6,11 +6,14 @@ import java.util.Objects;
 public class AdHocTeamMembers {
     //individual authors email
     @Id
-    @Column(nullable=false, length = 30)
-    private String IndividualAuthorsEmail;
+    @ManyToOne
+    @JoinColumn(name= "INDIVIDUAL_AUTHORS_EMAIL")
+    private AdHocTeamMembers IndividualAuthorsEmail;
     //email of the member
-    @Column(nullable = false, length = 50)
-    private String AdHocTeamsEmail;
+    @Id
+    @ManyToOne
+    @JoinColumn(name ="AD_HOC_TEAMS_EMAIL")
+    private AdHocTeamMembers AdHocTeamsEmail;
 
     /**
      * Null constructor
@@ -28,16 +31,16 @@ public class AdHocTeamMembers {
     this.AdHocTeamsEmail = AdHocTeamsEmail;
     }
 
-    public String getIndividualAuthorsEmail(){
+    public AdHocTeamMembers getIndividualAuthorsEmail(){
         return IndividualAuthorsEmail;
     }
-    public String getAdHocTeamsEmail(){
+    public AdHocTeamMembers getAdHocTeamsEmail(){
         return AdHocTeamsEmail;
     }
-    public void setIndividualAuthorsEmail(String IndividualAuthorsEmail){
-        this.IndividualAuthorsEmail=IndividualAuthorsEmail;
+    public void setIndividualAuthorsEmail(AdHocTeamMembers IndividualAuthorsEmail){
+        this.IndividualAuthorsEmail = IndividualAuthorsEmail;
     }
-    public void setAdHocTeamsEmail(String email){
+    public void setAdHocTeamsEmail(AdHocTeamMembers AdHocTeamsEmail){
         this.AdHocTeamsEmail=AdHocTeamsEmail;
     }
     /**
