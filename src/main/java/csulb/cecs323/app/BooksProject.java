@@ -19,10 +19,7 @@ import org.apache.derby.iapi.db.Database;
 import org.eclipse.persistence.exceptions.DatabaseException;
 
 import java.util.Scanner;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import javax.persistence.*;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -82,16 +79,14 @@ public class BooksProject {
       Publishers p = new Publishers("canada publishing", "canada@gmail.com", "123-456-7089");
       booksProject.createEntity(ae);
       booksProject.createEntity(p);
+
       booksProject.createEntity(new Books("isbn", "good title", 2022, ae, p));
       tx.commit();
 
-      booksProject.deleteBook(manager);
 
-      booksProject.createBook(tx);
-      booksProject.createBook(tx);
-
-      Scanner in = new Scanner(System.in);
-      String wait = in.nextLine();
+      while(true){
+         booksProject.promptAction(manager);
+      }
 
 
    } // End of the main method
@@ -126,24 +121,118 @@ public class BooksProject {
       LOGGER.info("Persisted object after flush (non-null id): " + entity);
    }
 
-   public void promptAction(){
+   public void promptAction(EntityManager em){
        Scanner in = new Scanner(System.in);
-
+       boolean optionValid = false;
+       while(!optionValid){
+          System.out.println("What would you like to do? Select an option." +
+                   "\n1. Add new item" +
+                   "\n2. List information about an item" +
+                   "\n3. Delete a book" +
+                   "\n4. Update an existing book" +
+                   "\n5. List primary keys");
+          String userInput = in.nextLine();
+          optionValid = true;
+          switch(userInput){
+              case "1":
+                 promptAdd(em);
+                 break;
+              case "2":
+                 promptList();
+                 break;
+              case "3":
+                 deleteBook(em);
+                 break;
+              case "4":
+                 System.out.println(getBooks());
+                 promptUpdateBook();
+                 System.out.println(getBooks());
+                 break;
+              case "5":
+                 promptKeys();
+                 break;
+              default:
+                 System.out.println("None of the options were selected properly, try again!");
+                 optionValid = false;
+          }
+       }
    }
 
-   public void promptAdd(){
+   public void promptAdd(EntityManager em){
+      EntityTransaction tx = em.getTransaction();
+      Scanner in = new Scanner(System.in);
+      boolean optionValid = false;
+      while(!optionValid){
+         System.out.println("Which type of item would you like to add? Select an option." +
+                 "\n1. Authoring Entity" +
+                 "\n2. Publisher" +
+                 "\n3. Book");
+         String userInput = in.nextLine();
+         optionValid = true;
+         switch(userInput){
+            case "1":
 
+               break;
+            case "2":
+
+               break;
+            case "3":
+               createBook(tx);
+               break;
+            default:
+               System.out.println("None of the options were selected properly, try again!");
+               optionValid = false;
+         }
+      }
    }
 
    public void promptList(){
+      Scanner in = new Scanner(System.in);
+      boolean optionValid = false;
+      while(!optionValid){
+         System.out.println("Which type of item would you like to list information about? Select an option." +
+                 "\n1. Publisher" +
+                 "\n2. Book" +
+                 "\n3. Writing Group");
+         String userInput = in.nextLine();
+         optionValid = true;
+         switch(userInput){
+            case "1":
 
-   }
 
-   public void promptDeleteBook(){
+               break;
+            case "2":
 
+               break;
+            case "3":
+
+               break;
+            default:
+               System.out.println("None of the options were selected properly, try again!");
+               optionValid = false;
+         }
+      }
    }
 
    public void promptUpdateBook(){
+      Scanner in = new Scanner(System.in);
+      Books book = selectBooks();
+      System.out.println("Enter the updated email: ");
+      String email = in.nextLine();
+      System.out.println("Enter the updated entity type: ");
+      String entityType = in.nextLine();
+      System.out.println("Enter the updated name: ");
+      String name = in.nextLine();
+      System.out.println("Enter the updated head writer: ");
+      String headWriter = in.nextLine();
+      System.out.println("Enter the updated year formed: ");
+      int yearFormed = in.nextInt();
+      AuthoringEntities newAuthoringEntity = new AuthoringEntities(email, entityType, name, headWriter, yearFormed);
+      book.setAuthoringEntity(newAuthoringEntity);
+      System.out.println("Book updated.");
+   }
+
+   public void promptKeys(){
 
    }
 
@@ -386,7 +475,7 @@ public class BooksProject {
             }
          }
          else {
-            System.out.println("No publisher exist. Publisher required to select book.");
+            System.out.println("No books exist.");
             bookValid = true; // Finish while loop, returning null since an authoring entity is impossible to select
          }
       }
@@ -396,33 +485,20 @@ public class BooksProject {
 
 
    public void deleteBook(EntityManager em){
-      Scanner in = new Scanner(System.in);
-      boolean inputValid = false;
-      boolean inputPossible = true;
-      while(!inputValid && inputPossible){
-         System.out.println("What is the book's ISBN?");
-         String ISBN = in.nextLine();
-         System.out.println("What is the book's title?");
-         String title = in.nextLine();
-         AuthoringEntities authoringEntity = selectAuthoringEntity();
-         if(authoringEntity == null){
-            inputPossible = false;
-         }
-         else {
-            Publishers publisher = selectPublisher();
-            if(publisher == null){
-               inputPossible = false;
-            }
-            else {
-               try{
+      System.out.println("Select a book to delete.");
+      Books book = selectBooks();
+      EntityTransaction tx = em.getTransaction();
+      tx.begin();
+      try{
+         em.remove(book);
+         tx.commit();
+         System.out.println(book.getTitle() + " successfully removed.");
+      }
+      catch(DatabaseException e){
+         tx.rollback();
+         System.out.println("Book not found!");
+      }
 
-               }
-               catch(DatabaseException e){
-                  System.out.println("That book was not found!");
-               }
-               inputValid = true;
-            }
-         }
    }
 }
 

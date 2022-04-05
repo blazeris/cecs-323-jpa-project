@@ -13,14 +13,14 @@ import java.io.Serializable;
         @UniqueConstraint(columnNames = {"title", "PUBLISHER_NAME"})
 })
 @NamedNativeQuery(
-        name = "ReturnAuthoringBook",
+        name = "ReturnBook",
         query = "SELECT * " +
                 "FROM BOOKS " +
                 "WHERE ISBN = ? ",
         resultClass = Books.class
 )
 @NamedNativeQuery(
-        name = "ReturnAuthoringBooks",
+        name = "ReturnBooks",
         query = "SELECT * " +
                 "FROM BOOKS ",
         resultClass = Books.class
@@ -150,6 +150,6 @@ public class Books implements Serializable {
     @Override
     public String toString(){
         return "ISBN: " + ISBN + "\tTitle: " + title +
-                "\tPublisher: " + publisher + "\tAuthoring Entity: " + authoringEntity;
+                "\tPublisher: " + publisher.getName() + "\tAuthoring Entity: " + authoringEntity;
     }
 }

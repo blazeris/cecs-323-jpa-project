@@ -8,12 +8,12 @@ public class AdHocTeamMembers {
     @Id
     @ManyToOne
     @JoinColumn(name= "INDIVIDUAL_AUTHORS_EMAIL")
-    private AdHocTeamMembers IndividualAuthorsEmail;
+    private AuthoringEntities individualAuthorsEmail;
     //email of the member
     @Id
     @ManyToOne
     @JoinColumn(name ="AD_HOC_TEAMS_EMAIL")
-    private AdHocTeamMembers AdHocTeamsEmail;
+    private AuthoringEntities adHocTeamsEmail;
 
     /**
      * Null constructor
@@ -26,22 +26,22 @@ public class AdHocTeamMembers {
  *@param IndividualAuthorsEmail
  *@param AdHocTeamsEmail
  */
-    public AdHocTeamMembers(String name, String email){
-    this.IndividualAuthorsEmail = IndividualAuthorsEmail;
-    this.AdHocTeamsEmail = AdHocTeamsEmail;
+    public AdHocTeamMembers(AuthoringEntities individualAuthorsEmail, AuthoringEntities adHocTeamsEmail){
+    this.individualAuthorsEmail = individualAuthorsEmail;
+    this.adHocTeamsEmail = adHocTeamsEmail;
     }
 
-    public AdHocTeamMembers getIndividualAuthorsEmail(){
-        return IndividualAuthorsEmail;
+    public AuthoringEntities getIndividualAuthorsEmail(){
+        return individualAuthorsEmail;
     }
-    public AdHocTeamMembers getAdHocTeamsEmail(){
-        return AdHocTeamsEmail;
+    public AuthoringEntities getAdHocTeamsEmail(){
+        return adHocTeamsEmail;
     }
-    public void setIndividualAuthorsEmail(AdHocTeamMembers IndividualAuthorsEmail){
-        this.IndividualAuthorsEmail = IndividualAuthorsEmail;
+    public void setIndividualAuthorsEmail(AuthoringEntities individualAuthorsEmail){
+        this.individualAuthorsEmail = individualAuthorsEmail;
     }
-    public void setAdHocTeamsEmail(AdHocTeamMembers AdHocTeamsEmail){
-        this.AdHocTeamsEmail=AdHocTeamsEmail;
+    public void setAdHocTeamsEmail(AuthoringEntities adHocTeamsEmail){
+        this.adHocTeamsEmail=adHocTeamsEmail;
     }
     /**
      * toString function for members
@@ -49,7 +49,7 @@ public class AdHocTeamMembers {
      */
     @Override
     public String toString () {
-        return "Member's name " + this.IndividualAuthorsEmail + "\tEmail: " + this.AdHocTeamsEmail;
+        return "Member's name " + this.individualAuthorsEmail + "\tEmail: " + this.adHocTeamsEmail;
     }
     /**
      * Function to check if name equals the object passed
