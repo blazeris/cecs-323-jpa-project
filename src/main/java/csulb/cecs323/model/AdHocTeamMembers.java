@@ -6,12 +6,12 @@ import java.util.Objects;
 public class AdHocTeamMembers {
     //individual authors email
     @Id
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name= "INDIVIDUAL_AUTHORS_EMAIL")
     private AdHocTeamMembers IndividualAuthorsEmail;
     //email of the member
     @Id
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name ="AD_HOC_TEAMS_EMAIL")
     private AdHocTeamMembers AdHocTeamsEmail;
 
