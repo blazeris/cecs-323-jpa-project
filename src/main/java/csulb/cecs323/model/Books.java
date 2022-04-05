@@ -12,6 +12,13 @@ import java.io.Serializable;
         @UniqueConstraint(columnNames = {"title", "AUTHORING_ENTITY_NAME"}),
         @UniqueConstraint(columnNames = {"title", "PUBLISHER_NAME"})
 })
+@NamedNativeQuery(
+        name = "ReturnAuthoringEntity",
+        query = "SELECT * " +
+                "FROM AUTHORING_ENTITIES " +
+                "WHERE ISBN = ?",
+        resultClass = AuthoringEntities.class
+)
 public class Books implements Serializable {
 
     // The ISBN code that identifies a specific book
@@ -135,6 +142,7 @@ public class Books implements Serializable {
      */
     @Override
     public String toString(){
-        return ISBN;
+        return "ISBN: " + ISBN + "\tTitle: " + title +
+                "\tPublisher: " + publisher + "\tAuthoring Entity: " + authoringEntity;
     }
 }
