@@ -15,6 +15,8 @@ package csulb.cecs323.app;
 
 // Import all of the entity classes that we have written for this application.
 import csulb.cecs323.model.*;
+import org.eclipse.persistence.exceptions.DatabaseException;
+
 import java.util.Scanner;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -75,17 +77,16 @@ public class BooksProject {
       LOGGER.fine("Begin of Transaction");
       EntityTransaction tx = manager.getTransaction();
 
-      Books book = booksProject.promptBook();
-      if(book != null){
-         tx.begin();
-         try{
-            booksProject.createEntity(book);
-         }
-         catch(Exception e){
-            System.out.println(e);
-         }
-         tx.commit();
-      }
+      tx.begin();
+      booksProject.createEntity(new AuthoringEntities("tree@gmail.com", "the good type", "mr. washington", "the american books", 1776));
+      booksProject.createEntity(new Publishers("canada publishing", "canada@gmail.com", "123-456-7089"));
+      tx.commit();
+
+      booksProject.createBook(tx);
+      booksProject.createBook(tx);
+
+      Scanner in = new Scanner(System.in);
+      String wait = in.nextLine();
 
       LOGGER.fine("End of Transaction");
 
@@ -121,6 +122,37 @@ public class BooksProject {
       LOGGER.info("Persisted object after flush (non-null id): " + entity);
    }
 
+   public AuthoringEntities promptAuthoringEntity(){
+      Scanner in = new Scanner(System.in);
+      AuthoringEntities authoringEntity = null;
+      System.out.println("Please enter the authoringEntity's email: ");
+      String email = in.nextLine();
+      System.out.println("Please enter the authoringEntity's name: ");
+      String name = in.nextLine();
+      System.out.println("Please enter the authoringEntity's headWriter: ");
+      String headWriter = in.nextLine();
+      System.out.println("Please enter the authoringEntity's year of formation: ");
+      String userInput = in.nextLine();
+      int yearFormed = Integer.parseInt(userInput);
+      System.out.println("Please enter the authoringEntity's type: ");
+      String authoringEntityType = in.nextLine();
+      authoringEntity = new AuthoringEntities(email, authoringEntityType, headWriter, name, yearFormed);
+      return authoringEntity;
+   }
+
+   public Publishers promptPublisher(){
+      Scanner in = new Scanner(System.in);
+      Publishers publisher = null;
+      System.out.println("Please enter the publisher's name: ");
+      String name = in.nextLine();
+      System.out.println("Please enter the publisher's email: ");
+      String email = in.nextLine();
+      System.out.println("Please enter the publisher's phone number: ");
+      String phone = in.nextLine();
+      publisher = new Publishers(name, email, phone);
+      return publisher;
+   }
+
    public List<AuthoringEntities> getAuthoringEntities(){
       List<AuthoringEntities> authoringEntities = this.entityManager.createNamedQuery("ReturnAuthoringEntities",
               AuthoringEntities.class).getResultList();
@@ -148,7 +180,7 @@ public class BooksProject {
          List<AuthoringEntities> authoringEntities = getAuthoringEntities();
          if(authoringEntities != null){
             for(int i = 1; i <= authoringEntities.size(); i++){
-               System.out.printf("%s. %s\n", i, authoringEntities.get(i));
+               System.out.printf("%s. %s\n", i, authoringEntities.get(i - 1));
             }
             String userInput = in.nextLine();
             try{
@@ -179,7 +211,7 @@ public class BooksProject {
          List<Publishers> publishers = getPublishers();
          if(publishers != null){
             for(int i = 1; i <= publishers.size(); i++){
-               System.out.printf("%s. %s\n", i, publishers.get(i));
+               System.out.printf("%s. %s\n", i, publishers.get(i - 1));
             }
             String userInput = in.nextLine();
             try{
@@ -200,24 +232,6 @@ public class BooksProject {
       }
       return publisher;
    }
-   public AuthoringEntities promptAuthoringEntity(){
-      Scanner in = new Scanner(System.in);
-      AuthoringEntities authoringentity = null;
-      System.out.println("Please enter the authoringEntity's email: ");
-      String email = in.nextLine();
-      System.out.println("Please enter the authoringEntity's name: ");
-      String name = in.nextLine();
-      System.out.println("Please enter the authoringEntity's headWriter: ");
-      String headWriter = in.nextLine();
-      System.out.println("Please enter the authoringEntity's year of formation: ");
-      String yearFormed = in.nextLine();
-      System.out.println("Please enter the authoringEntity's type: ");
-      String AuthoringEntityType = in.nextLine();
-      authoringentity = new AuthoringEntities (email,name,headWriter,yearFormed,AuthoringEntityType);
-      return authoringentity;
-   }
-
-
 
    public Books promptBook(){
       Scanner in = new Scanner(System.in);
@@ -244,7 +258,6 @@ public class BooksProject {
             }
          }
 
-
          AuthoringEntities authoringEntity = selectAuthoringEntity();
          if(authoringEntity == null){
             inputPossible = false;
@@ -256,10 +269,35 @@ public class BooksProject {
             }
             else {
                book = new Books(ISBN, title, yearPublished, authoringEntity, publisher);
+               inputValid = true;
             }
          }
       }
       return book;
+   }
+
+   public void createBook(EntityTransaction tx){
+      boolean bookValid = false;
+      while(!bookValid){
+         Books book = this.promptBook();
+         if(book != null){
+            tx.begin();
+            try{
+               this.createEntity(book);
+               tx.commit();
+               bookValid = true;
+            }
+            catch(DatabaseException e){
+               System.out.println("This already exists in the database! Try again!");
+               tx.rollback();
+            }
+         }
+         else {
+            System.out.println("Either no publishers or authoring entities exist, impossible to make book.");
+            bookValid = true;
+         }
+      }
+
    }
 }
 
