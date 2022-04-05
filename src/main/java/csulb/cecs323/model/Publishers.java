@@ -88,10 +88,8 @@ public class Publishers {
     public void setPhone(String phone) {
         this.phone = phone;
     }
-
-
     @Override
-    public String toString () {
+    public String tString () {
         return name;
     }
     @Override
@@ -108,9 +106,16 @@ public class Publishers {
         }
         return results;
     }
-
+    public String toString() {
+        return "The name of the publisher is:" + name + ", "
+                + "the email of the publisher is:" + email + ", "
+                + "finally the phone number of the publisher is:"
+                + phone ;
+    }
     @Override
     public int hashCode() {
         return Objects.hash(this.getName());
     }
 }
+
+
