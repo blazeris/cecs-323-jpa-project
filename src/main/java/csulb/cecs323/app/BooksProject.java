@@ -238,7 +238,11 @@ public class BooksProject {
       book.setAuthoringEntity(newAuthoringEntity);
       System.out.println("Book updated.");
    }
-
+/*
+ *Creates a menu for the user to pick one option.
+ *then Lists the primary key of all the row of either publishers, Books or AuthoringEntities depending on what the user picks
+ *@param
+ */
    public void promptKeys(){
       System.out.println("Hello user please select one of the three options:");
       System.out.println("1 - Publishers");
@@ -251,25 +255,29 @@ public class BooksProject {
 
       switch(choice){
          case 1:
+            //if the user picks publishers
             List<Publishers> publishers = this.entityManager.createNamedQuery("ReturnPublisherPrimary",
                     Publishers.class).getResultList();
             publishers.forEach(System.out::println);
             break;
          case 2:
-
+            //if the user picks Books
             List<Books> books = this.entityManager.createNamedQuery("ReturnBooksPrimary",
                     Books.class).getResultList();
             Books.forEach(System.out::println);
             break;
          case 3:
-
+            //if the user picks AuthoringEntities
             List<AuthoringEntities> authoringEntities = this.entityManager.createNamedQuery("ReturnAuthoringEntitiesPrimary",
                     AuthoringEntities.class).getResultList();
             AuthoringEntities.forEach(System.out::println);
             break;
       }
    }
-
+/*
+ *Asks the user for what type of authoring entity they would like to enter.
+ *@param
+ */
    public AuthoringEntities promptAuthoringEntity(){
       Scanner in = new Scanner(System.in);
       AuthoringEntities authoringEntity = null;
@@ -616,4 +624,3 @@ public class BooksProject {
 
 
 }
-
