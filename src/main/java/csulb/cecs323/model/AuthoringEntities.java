@@ -25,15 +25,13 @@ import java.util.Objects;
                 "FROM AUTHORING_ENTITIES ",
         resultClass = AuthoringEntities.class
 )
-public class AuthoringEntities {
+@Inheritance
+@DiscriminatorColumn(name = "authoring_entity_type", columnDefinition = "CHAR(31)")
+public abstract class AuthoringEntities {
     // The email associated with the authoring entity
     @Id
     @Column(nullable = false, length = 30)
     private String email;
-
-    // The type of authoring entity
-    @Column(nullable=false, length = 31)  
-    private String authoringEntityType;
 
     // The name of the authoring entity
     @Column(nullable=false, length = 80)
@@ -58,12 +56,10 @@ public class AuthoringEntities {
     /**
      * Authoring Entity constructor
      * @param email
-     * @param authoringEntityType
      * @param name
      */
-    public AuthoringEntities (String email, String authoringEntityType, String name) {
+    public AuthoringEntities (String email, String name) {
         this.email = email;
-        this.authoringEntityType = authoringEntityType;
         this.name = name;
         this.headWriter = null;
         this.yearFormed = 0;
@@ -72,15 +68,13 @@ public class AuthoringEntities {
     /**
      * Writing group constructor
      * @param email
-     * @param authoringEntityType
      * @param name
      * @param headWriter
      * @param yearFormed
      */
-    public AuthoringEntities (String email, String authoringEntityType, String name,
+    public AuthoringEntities (String email, String name,
                       String headWriter, int yearFormed) {
         this.email = email;
-        this.authoringEntityType = authoringEntityType;
         this.name = name;
         this.headWriter = headWriter;
         this.yearFormed = yearFormed;
@@ -92,14 +86,6 @@ public class AuthoringEntities {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getAuthoringEntityType() {
-        return authoringEntityType;
-    }
-
-    public void setAuthoringEntityType(String authoringEntityType) {
-        this.authoringEntityType = authoringEntityType;
     }
 
     public String getName() {

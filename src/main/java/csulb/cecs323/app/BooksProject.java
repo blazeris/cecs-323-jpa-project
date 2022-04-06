@@ -75,11 +75,11 @@ public class BooksProject {
 
       // Insert example data
       tx.begin();
-      AuthoringEntities ae = new AuthoringEntities("tree@gmail.com", "the good type", "mr. washington", "the american books", 1776);
+      AuthoringEntities ae = new IndividualAuthor("tree@gmail.com", "mr. washington");
       Publishers p = new Publishers("canada publishing", "canada@gmail.com", "123-456-7089");
       booksProject.createEntity(ae);
       booksProject.createEntity(p);
-
+      booksProject.createEntity(new AdHocTeam("email", "pro team"));
       booksProject.createEntity(new Books("isbn", "good title", 2022, ae, p));
       tx.commit();
 
@@ -141,7 +141,7 @@ public class BooksProject {
                  promptList();
                  break;
               case "3":
-                 deleteBook(em);
+                 promptDeleteBook(em);
                  break;
               case "4":
                  System.out.println(getBooks());
@@ -171,10 +171,10 @@ public class BooksProject {
          optionValid = true;
          switch(userInput){
             case "1":
-
+               createAuthoringEntity(tx);
                break;
             case "2":
-
+               createPublisher(tx);
                break;
             case "3":
                createBook(tx);
@@ -198,20 +198,36 @@ public class BooksProject {
          optionValid = true;
          switch(userInput){
             case "1":
-
-
+               System.out.println(selectPublisher());
                break;
             case "2":
-
+               System.out.println(selectBooks());
                break;
             case "3":
-
+               System.out.println(selectAuthoringEntity());
                break;
             default:
                System.out.println("None of the options were selected properly, try again!");
                optionValid = false;
          }
       }
+   }
+
+   public void promptDeleteBook(EntityManager em){
+      System.out.println("Select a book to delete.");
+      Books book = selectBooks();
+      EntityTransaction tx = em.getTransaction();
+      tx.begin();
+      try{
+         em.remove(book);
+         tx.commit();
+         System.out.println(book.getTitle() + " successfully removed.");
+      }
+      catch(DatabaseException e){
+         tx.rollback();
+         System.out.println("Book not found!");
+      }
+
    }
 
    public void promptUpdateBook(){
@@ -227,8 +243,8 @@ public class BooksProject {
       String headWriter = in.nextLine();
       System.out.println("Enter the updated year formed: ");
       int yearFormed = in.nextInt();
-      AuthoringEntities newAuthoringEntity = new AuthoringEntities(email, entityType, name, headWriter, yearFormed);
-      book.setAuthoringEntity(newAuthoringEntity);
+      //AuthoringEntities newAuthoringEntity = new AuthoringEntities(email, entityType, name, headWriter, yearFormed);
+      //book.setAuthoringEntity(newAuthoringEntity);
       System.out.println("Book updated.");
    }
 
@@ -250,7 +266,7 @@ public class BooksProject {
       int yearFormed = Integer.parseInt(userInput);
       System.out.println("Please enter the authoringEntity's type: ");
       String authoringEntityType = in.nextLine();
-      authoringEntity = new AuthoringEntities(email, authoringEntityType, headWriter, name, yearFormed);
+      //authoringEntity = new AuthoringEntities(email, authoringEntityType, headWriter, name, yearFormed);
       return authoringEntity;
    }
 
@@ -267,6 +283,51 @@ public class BooksProject {
       return publisher;
    }
 
+   public Books promptBook(){
+      Scanner in = new Scanner(System.in);
+      Books book = null;
+      boolean inputValid = false;
+      boolean inputPossible = true;
+      while(!inputValid && inputPossible){
+         System.out.println("What is the book's ISBN?");
+         String ISBN = in.nextLine();
+         System.out.println("What is the book's title?");
+         String title = in.nextLine();
+
+         boolean yearPublishedValid = false;
+         int yearPublished = 0;
+         while(!yearPublishedValid){
+            System.out.println("What year was the book published?");
+            String userInput = in.nextLine();
+            try{
+               yearPublished = Integer.parseInt(userInput);
+               yearPublishedValid = true;
+            }
+            catch (Exception e){
+               System.out.println("Invalid year published, try again.");
+            }
+         }
+
+         AuthoringEntities authoringEntity = selectAuthoringEntity();
+         if(authoringEntity == null){
+            inputPossible = false;
+         }
+         else {
+            Publishers publisher = selectPublisher();
+            if(publisher == null){
+               inputPossible = false;
+            }
+            else {
+               book = new Books(ISBN, title, yearPublished, authoringEntity, publisher);
+               inputValid = true;
+            }
+         }
+      }
+      return book;
+   }
+
+
+
    public List<AuthoringEntities> getAuthoringEntities(){
       List<AuthoringEntities> authoringEntities = this.entityManager.createNamedQuery("ReturnAuthoringEntities",
               AuthoringEntities.class).getResultList();
@@ -276,7 +337,7 @@ public class BooksProject {
       return authoringEntities;
    }
 
-    public AuthoringEntities getAuthoringEntity(String email){
+   public AuthoringEntities getAuthoringEntity(String email){
         List<AuthoringEntities> authoringEntities = this.entityManager.createNamedQuery("ReturnAuthoringEntity",
                 AuthoringEntities.class).setParameter(1, email).getResultList();
         if(authoringEntities.size() == 0){
@@ -284,6 +345,7 @@ public class BooksProject {
         }
         return authoringEntities.get(0);
     }
+
 
    public List<Publishers> getPublishers(){
       List<Publishers> publishers = this.entityManager.createNamedQuery("ReturnPublishers",
@@ -294,7 +356,7 @@ public class BooksProject {
       return publishers;
    }
 
-    public Publishers getPublisher(String name){
+   public Publishers getPublisher(String name){
         List<Publishers> publishers = this.entityManager.createNamedQuery("ReturnPublisher",
                 Publishers.class).setParameter(1, name).getResultList();
         if(publishers.size() == 0){
@@ -303,14 +365,6 @@ public class BooksProject {
         return publishers.get(0);
     }
 
-    public Books getBook(String ISBN){
-      List<Books> books = this.entityManager.createNamedQuery("ReturnBook",
-              Books.class).setParameter(1, ISBN).getResultList();
-      if(books.size() == 0){
-         books = null;
-      }
-      return books.get(0);
-   }
 
    public List<Books> getBooks(){
       List<Books> books = this.entityManager.createNamedQuery("ReturnBooks",
@@ -320,6 +374,17 @@ public class BooksProject {
       }
       return books;
    }
+
+   public Books getBook(String ISBN){
+      List<Books> books = this.entityManager.createNamedQuery("ReturnBook",
+              Books.class).setParameter(1, ISBN).getResultList();
+      if(books.size() == 0){
+         books = null;
+      }
+      return books.get(0);
+   }
+
+
 
    public AuthoringEntities selectAuthoringEntity(){
       Scanner in = new Scanner(System.in);
@@ -383,74 +448,6 @@ public class BooksProject {
       return publisher;
    }
 
-   public Books promptBook(){
-      Scanner in = new Scanner(System.in);
-      Books book = null;
-      boolean inputValid = false;
-      boolean inputPossible = true;
-      while(!inputValid && inputPossible){
-         System.out.println("What is the book's ISBN?");
-         String ISBN = in.nextLine();
-         System.out.println("What is the book's title?");
-         String title = in.nextLine();
-
-         boolean yearPublishedValid = false;
-         int yearPublished = 0;
-         while(!yearPublishedValid){
-            System.out.println("What year was the book published?");
-            String userInput = in.nextLine();
-            try{
-               yearPublished = Integer.parseInt(userInput);
-               yearPublishedValid = true;
-            }
-            catch (Exception e){
-               System.out.println("Invalid year published, try again.");
-            }
-         }
-
-         AuthoringEntities authoringEntity = selectAuthoringEntity();
-         if(authoringEntity == null){
-            inputPossible = false;
-         }
-         else {
-            Publishers publisher = selectPublisher();
-            if(publisher == null){
-               inputPossible = false;
-            }
-            else {
-               book = new Books(ISBN, title, yearPublished, authoringEntity, publisher);
-               inputValid = true;
-            }
-         }
-      }
-      return book;
-   }
-
-   public void createBook(EntityTransaction tx){
-      boolean bookValid = false;
-      while(!bookValid){
-         Books book = this.promptBook();
-         if(book != null){
-            tx.begin();
-            try{
-               this.createEntity(book);
-               tx.commit();
-               bookValid = true;
-            }
-            catch(DatabaseException e){
-               System.out.println("This already exists in the database! Try again!");
-               tx.rollback();
-            }
-         }
-         else {
-            System.out.println("Either no publishers or authoring entities exist, impossible to make book.");
-            bookValid = true;
-         }
-      }
-
-   }
-
-
    public Books selectBooks(){
       Scanner in = new Scanner(System.in);
       Books book = null;
@@ -484,21 +481,69 @@ public class BooksProject {
 
 
 
-   public void deleteBook(EntityManager em){
-      System.out.println("Select a book to delete.");
-      Books book = selectBooks();
-      EntityTransaction tx = em.getTransaction();
-      tx.begin();
-      try{
-         em.remove(book);
-         tx.commit();
-         System.out.println(book.getTitle() + " successfully removed.");
+   public void createAuthoringEntity(EntityTransaction tx){
+      boolean authoringEntityValid = false;
+      while(!authoringEntityValid){
+         AuthoringEntities authoringEntity = this.promptAuthoringEntity();
+         if(authoringEntity != null){
+            tx.begin();
+            try{
+               this.createEntity(authoringEntity);
+               tx.commit();
+               authoringEntityValid = true;
+            }
+            catch(DatabaseException e){
+               System.out.println("This already exists in the database! Try again!");
+               tx.rollback();
+            }
+         }
       }
-      catch(DatabaseException e){
-         tx.rollback();
-         System.out.println("Book not found!");
-      }
-
    }
+
+   public void createPublisher(EntityTransaction tx){
+      boolean publisherValid = false;
+      while(!publisherValid){
+         Publishers publisher = this.promptPublisher();
+         if(publisher != null){
+            tx.begin();
+            try{
+               this.createEntity(publisher);
+               tx.commit();
+               publisherValid = true;
+            }
+            catch(DatabaseException e){
+               System.out.println("This already exists in the database! Try again!");
+               tx.rollback();
+            }
+         }
+      }
+   }
+
+   public void createBook(EntityTransaction tx){
+      boolean bookValid = false;
+      while(!bookValid){
+         Books book = this.promptBook();
+         if(book != null){
+            tx.begin();
+            try{
+               this.createEntity(book);
+               tx.commit();
+               bookValid = true;
+            }
+            catch(DatabaseException e){
+               System.out.println("This already exists in the database! Try again!");
+               tx.rollback();
+            }
+         }
+         else {
+            System.out.println("Either no publishers or authoring entities exist, impossible to make book.");
+            bookValid = true;
+         }
+      }
+   }
+
+
+
+
 }
 

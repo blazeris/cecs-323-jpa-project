@@ -106,10 +106,9 @@ public class Publishers {
 
     @Override
     public String toString() {
-        return "The name of the publisher is: " + name + ", "
-                + "the email of the publisher is: " + email + ", "
-                + "finally the phone number of the publisher is: "
-                + phone ;
+        return "Name: " + name +
+                "\tEmail: " + email +
+                "\tPhone Number: " + phone;
     }
     @Override
     public int hashCode() {
