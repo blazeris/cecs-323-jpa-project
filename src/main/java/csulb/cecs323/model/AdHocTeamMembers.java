@@ -21,11 +21,11 @@ public class AdHocTeamMembers {
     public AdHocTeamMembers(){
 
     }
-/*
- *Arguments constructor
- *@param IndividualAuthorsEmail
- *@param AdHocTeamsEmail
- */
+    /**
+     *Arguments constructor
+     *@param IndividualAuthorsEmail
+     *@param AdHocTeamsEmail
+     **/
     public AdHocTeamMembers(IndividualAuthor individualAuthorsEmail, AdHocTeam adHocTeamsEmail){
     this.individualAuthorsEmail = individualAuthorsEmail;
     this.adHocTeamsEmail = adHocTeamsEmail;
