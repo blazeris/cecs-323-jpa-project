@@ -8,12 +8,12 @@ public class AdHocTeamMembers {
     @Id
     @ManyToOne
     @JoinColumn(name= "INDIVIDUAL_AUTHORS_EMAIL")
-    private AuthoringEntities individualAuthorsEmail;
+    private IndividualAuthor individualAuthorsEmail;
     //email of the member
     @Id
     @ManyToOne
     @JoinColumn(name ="AD_HOC_TEAMS_EMAIL")
-    private AuthoringEntities adHocTeamsEmail;
+    private AdHocTeam adHocTeamsEmail;
 
     /**
      * Null constructor
@@ -26,21 +26,21 @@ public class AdHocTeamMembers {
  *@param IndividualAuthorsEmail
  *@param AdHocTeamsEmail
  */
-    public AdHocTeamMembers(AuthoringEntities individualAuthorsEmail, AuthoringEntities adHocTeamsEmail){
+    public AdHocTeamMembers(IndividualAuthor individualAuthorsEmail, AdHocTeam adHocTeamsEmail){
     this.individualAuthorsEmail = individualAuthorsEmail;
     this.adHocTeamsEmail = adHocTeamsEmail;
     }
 
-    public AuthoringEntities getIndividualAuthorsEmail(){
+    public IndividualAuthor getIndividualAuthorsEmail(){
         return individualAuthorsEmail;
     }
-    public AuthoringEntities getAdHocTeamsEmail(){
+    public AdHocTeam getAdHocTeamsEmail(){
         return adHocTeamsEmail;
     }
-    public void setIndividualAuthorsEmail(AuthoringEntities individualAuthorsEmail){
+    public void setIndividualAuthorsEmail(IndividualAuthor individualAuthorsEmail){
         this.individualAuthorsEmail = individualAuthorsEmail;
     }
-    public void setAdHocTeamsEmail(AuthoringEntities adHocTeamsEmail){
+    public void setAdHocTeamsEmail(AdHocTeam adHocTeamsEmail){
         this.adHocTeamsEmail=adHocTeamsEmail;
     }
     /**

@@ -108,6 +108,10 @@ public class Publishers {
 
     @Override
     public String toString() {
+        return name;
+    }
+
+    public String info() {
         return "Name: " + name +
                 "\tEmail: " + email +
                 "\tPhone Number: " + phone;

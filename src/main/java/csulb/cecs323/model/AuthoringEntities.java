@@ -27,7 +27,9 @@ import java.util.Objects;
         resultClass = AuthoringEntities.class
 )
 @NamedNativeQuery(name = "ReturnAuthoringEntitiesPrimary",
-        query = "SELECT email, authoring_entity_type FROM AuthoringEntities")
+        query = "SELECT email, authoring_entity_type " +
+                "FROM AUTHORING_ENTITIES ",
+        resultClass = AuthoringEntities.class)
 @Inheritance
 @DiscriminatorColumn(name = "AUTHORING_ENTITY_TYPE", columnDefinition = "CHAR(31)")
 public abstract class AuthoringEntities {
@@ -118,7 +120,11 @@ public abstract class AuthoringEntities {
 
     @Override
     public String toString () {
-        return email;
+        return name;
+    }
+
+    public String info(){
+        return "Name: " + name + "\tEmail: " + email;
     }
 
     @Override

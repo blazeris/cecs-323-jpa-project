@@ -150,7 +150,13 @@ public class Books implements Serializable {
      */
     @Override
     public String toString(){
+        return title;
+    }
+
+
+
+    public String info(){
         return "ISBN: " + ISBN + "\tTitle: " + title +
-                "\tPublisher: " + publisher.getName() + "\tAuthoring Entity: " + authoringEntity;
+                "\nPublisher: " + publisher.info() + "\nAuthoring Entity: " + authoringEntity.info();
     }
 }

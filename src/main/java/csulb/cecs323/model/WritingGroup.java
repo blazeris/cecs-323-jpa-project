@@ -13,4 +13,9 @@ public class WritingGroup  extends AuthoringEntities {
                               String headWriter, int yearFormed) {
         super(email, name, headWriter, yearFormed);
     }
+
+    @Override
+    public String info(){
+        return super.info() + "Head Writer: " + getHeadWriter() + "Year Formed: " + getYearFormed();
+    }
 }

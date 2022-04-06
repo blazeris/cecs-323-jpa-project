@@ -126,7 +126,7 @@ public class BooksProject {
        Scanner in = new Scanner(System.in);
        boolean optionValid = false;
        while(!optionValid){
-          System.out.println("What would you like to do? Select an option." +
+          System.out.println("\nWhat would you like to do? Select an option." +
                    "\n1. Add new item" +
                    "\n2. List information about an item" +
                    "\n3. Delete a book" +
@@ -145,9 +145,9 @@ public class BooksProject {
                  promptDeleteBook(em);
                  break;
               case "4":
-                 System.out.println(getBooks());
+                 //System.out.println(getBooks());
                  promptUpdateBook();
-                 System.out.println(getBooks());
+                 //System.out.println(getBooks());
                  break;
               case "5":
                  promptKeys();
@@ -164,7 +164,7 @@ public class BooksProject {
       Scanner in = new Scanner(System.in);
       boolean optionValid = false;
       while(!optionValid){
-         System.out.println("Which type of item would you like to add? Select an option." +
+         System.out.println("\nWhich type of item would you like to add? Select an option." +
                  "\n1. Authoring Entity" +
                  "\n2. Publisher" +
                  "\n3. Book");
@@ -191,7 +191,7 @@ public class BooksProject {
       Scanner in = new Scanner(System.in);
       boolean optionValid = false;
       while(!optionValid){
-         System.out.println("Which type of item would you like to list information about? Select an option." +
+         System.out.println("\nWhich type of item would you like to list information about? Select an option." +
                  "\n1. Publisher" +
                  "\n2. Book" +
                  "\n3. Writing Group");
@@ -199,13 +199,22 @@ public class BooksProject {
          optionValid = true;
          switch(userInput){
             case "1":
-               System.out.println(selectPublisher());
+               Publishers publisher = selectPublisher();
+               if(publisher != null){
+                  System.out.println(publisher.info());
+               }
                break;
             case "2":
-               System.out.println(selectBooks());
+               Books book = selectBooks();
+               if(book != null){
+                  System.out.println(book.info());
+               }
                break;
             case "3":
-               System.out.println(selectAuthoringEntity("WRITING_GROUP"));
+               AuthoringEntities authoringEntity = selectAuthoringEntity("WRITING_GROUP");
+               if(authoringEntity != null){
+                  System.out.println(authoringEntity.info());
+               }
                break;
             default:
                System.out.println("None of the options were selected properly, try again!");
@@ -215,7 +224,7 @@ public class BooksProject {
    }
 
    public void promptDeleteBook(EntityManager em){
-      System.out.println("Select a book to delete.");
+      System.out.println("\nSelect a book to delete.");
       Books book = selectBooks();
       EntityTransaction tx = em.getTransaction();
       tx.begin();
@@ -234,86 +243,106 @@ public class BooksProject {
    public void promptUpdateBook(){
       Scanner in = new Scanner(System.in);
       Books book = selectBooks();
-      AuthoringEntities newAuthoringEntity = promptAuthoringEntity();
-      book.setAuthoringEntity(newAuthoringEntity);
-      System.out.println("Book updated.");
+      if(book != null){
+         AuthoringEntities newAuthoringEntity = selectAuthoringEntity();
+         if(newAuthoringEntity != null){
+            book.setAuthoringEntity(newAuthoringEntity);
+            System.out.println("Book updated.");
+         }
+      }
    }
 
    public void promptKeys(){
-      System.out.println("Hello user please select one of the three options:");
+      System.out.println("\nHello user please select one of the three options:");
       System.out.println("1 - Publishers");
       System.out.println("2 - Books");
       System.out.println("3 - Authoring entities");
       Scanner scanchoice = new Scanner(System.in);
-      int choice = scanchoice.nextInt();
-
-
+      String choice = scanchoice.nextLine();
 
       switch(choice){
-         case 1:
+         case "1":
             List<Publishers> publishers = this.entityManager.createNamedQuery("ReturnPublisherPrimary",
                     Publishers.class).getResultList();
-            publishers.forEach(System.out::println);
+            for(Publishers publisher: publishers){
+               System.out.println(publisher);
+            }
             break;
-         case 2:
-
+         case "2":
             List<Books> books = this.entityManager.createNamedQuery("ReturnBooksPrimary",
                     Books.class).getResultList();
-            Books.forEach(System.out::println);
+            for(Books book: books){
+               System.out.println(book);
+            }
             break;
-         case 3:
-
+         case "3":
             List<AuthoringEntities> authoringEntities = this.entityManager.createNamedQuery("ReturnAuthoringEntitiesPrimary",
                     AuthoringEntities.class).getResultList();
-            AuthoringEntities.forEach(System.out::println);
+            for(AuthoringEntities authoringEntity: authoringEntities){
+               System.out.println("Name: " + authoringEntity + "\tType: " + authoringEntity.getClass().getSimpleName());
+            }
             break;
       }
    }
 
-   public AuthoringEntities promptAuthoringEntity(){
+   public AuthoringEntities promptAuthoringEntity(EntityTransaction tx){
       Scanner in = new Scanner(System.in);
       AuthoringEntities authoringEntity = null;
 
       boolean optionValid = false;
 
       while(!optionValid){
-         System.out.println("What type of authoring entity would you like to add? Select an option." +
+         optionValid = true;
+         System.out.println("\nWhat type of authoring entity would you like to add? Select an option." +
                  "\n1. Writing Group" +
                  "\n2. Individual Author" +
                  "\n3. Ad Hoc Team" +
                  "\n4. Add to an Individual Author to a Writing Group");
          String userInput = in.nextLine();
+
+         String email = "";
+         String name = "";
+
          String[] options = {"1", "2", "3"};
-
-         if(Arrays.asList(options).contains(userInput)){
-            optionValid = true;
-
+         if(Arrays.asList(options).contains(userInput)) {
             System.out.println("Please enter email: ");
-            String email = in.nextLine();
+            email = in.nextLine();
             System.out.println("Please enter the name: ");
-            String name = in.nextLine();
-
-            switch(userInput){
-               case "1":
-                  System.out.println("Please enter the head writer name: ");
-                  String headWriter = in.nextLine();
-                  System.out.println("Please enter the year of formation: ");
-                  int yearFormed = Integer.parseInt(in.nextLine());
-                  authoringEntity = new WritingGroup(email, name, headWriter, yearFormed);
-                  break;
-               case "2":
-                  authoringEntity = new IndividualAuthor(email, name);
-                  break;
-               case "3":
-                  authoringEntity = new AdHocTeam(email, name);
-                  break;
-               case "4":
-
-                  break;
-            }
+            name = in.nextLine();
          }
-         else {
-            System.out.println("None of the options were selected properly, try again!");
+
+         switch(userInput){
+            case "1":
+               System.out.println("Please enter the head writer name: ");
+               String headWriter = in.nextLine();
+               System.out.println("Please enter the year of formation: ");
+               int yearFormed = Integer.parseInt(in.nextLine());
+               authoringEntity = new WritingGroup(email, name, headWriter, yearFormed);
+               break;
+            case "2":
+               authoringEntity = new IndividualAuthor(email, name);
+               break;
+            case "3":
+               authoringEntity = new AdHocTeam(email, name);
+               break;
+            case "4":
+               IndividualAuthor author = (IndividualAuthor) selectAuthoringEntity("INDIVIDUAL_AUTHOR");
+               AdHocTeam adHocTeam = (AdHocTeam) selectAuthoringEntity("AD_HOC_TEAM");
+               AdHocTeamMembers adHocTeamMember = new AdHocTeamMembers(author, adHocTeam);
+               tx.begin();
+               try{
+                  this.createEntity(adHocTeamMember);
+                  tx.commit();
+                  System.out.println(author + " is now a part of " + adHocTeam);
+               }
+               catch (DatabaseException e){
+                  System.out.println("That already exists!");
+                  tx.rollback();
+               }
+               break;
+            default:
+               System.out.println("None of the options were selected properly, try again!");
+               optionValid = false;
          }
       }
       return authoringEntity;
@@ -322,7 +351,7 @@ public class BooksProject {
    public Publishers promptPublisher(){
       Scanner in = new Scanner(System.in);
       Publishers publisher = null;
-      System.out.println("Please enter the publisher's name: ");
+      System.out.println("\nPlease enter the publisher's name: ");
       String name = in.nextLine();
       System.out.println("Please enter the publisher's email: ");
       String email = in.nextLine();
@@ -338,7 +367,7 @@ public class BooksProject {
       boolean inputValid = false;
       boolean inputPossible = true;
       while(!inputValid && inputPossible){
-         System.out.println("What is the book's ISBN?");
+         System.out.println("\nWhat is the book's ISBN?");
          String ISBN = in.nextLine();
          System.out.println("What is the book's title?");
          String title = in.nextLine();
@@ -436,7 +465,36 @@ public class BooksProject {
 
 
    public String selectAuthoringEntityType(){
-      List<String> types =
+      Scanner in = new Scanner(System.in);
+      boolean optionValid = false;
+      String authoringEntityType = "";
+      while(!optionValid) {
+         System.out.println("\nWhat type of authoring entity would you like to select? Select an option." +
+                 "\n1. Writing Group" +
+                 "\n2. Individual Author" +
+                 "\n3. Ad Hoc Team");
+         String userInput = in.nextLine();
+         optionValid = true;
+         switch (userInput) {
+            case "1":
+               authoringEntityType = "WRITING_GROUP";
+               break;
+            case "2":
+               authoringEntityType = "INDIVIDUAL_AUTHOR";
+               break;
+            case "3":
+               authoringEntityType = "AD_HOC_TEAM";
+               break;
+            default:
+               System.out.println("None of the options were selected properly, try again!");
+               optionValid = false;
+         }
+      }
+      return authoringEntityType;
+   }
+
+   public AuthoringEntities selectAuthoringEntity(){
+      return selectAuthoringEntity(selectAuthoringEntityType());
    }
 
    public AuthoringEntities selectAuthoringEntity(String authoringEntityType){
@@ -461,7 +519,7 @@ public class BooksProject {
 
       boolean authoringEntityValid = false;
       while(!authoringEntityValid && authoringEntityTypeValid){
-         System.out.println("Select the number of the corresponding " + authoringEntityTypeFormatted);
+         System.out.println("\nSelect the number of the corresponding " + authoringEntityTypeFormatted);
          List<AuthoringEntities> authoringEntities = getAuthoringEntities(authoringEntityType);
          if(authoringEntities != null){
             for(int i = 1; i <= authoringEntities.size(); i++){
@@ -480,7 +538,7 @@ public class BooksProject {
             }
          }
          else {
-            System.out.println("No authoring entities exist. Authoring entity required to select book.");
+            System.out.println("No " + authoringEntityTypeFormatted + " exists.");
             authoringEntityValid = true; // Finish while loop, returning null since an authoring entity is impossible to select
          }
       }
@@ -492,7 +550,7 @@ public class BooksProject {
       Publishers publisher = null;
       boolean publisherValid = false;
       while(!publisherValid){
-         System.out.println("Select the number of the corresponding publisher");
+         System.out.println("\nSelect the number of the corresponding publisher");
          List<Publishers> publishers = getPublishers();
          if(publishers != null){
             for(int i = 1; i <= publishers.size(); i++){
@@ -523,7 +581,7 @@ public class BooksProject {
       Books book = null;
       boolean bookValid = false;
       while(!bookValid){
-         System.out.println("Select the number of the corresponding book");
+         System.out.println("\nSelect the number of the corresponding book");
          List<Books> books = getBooks();
          if(books != null){
             for(int i = 1; i <= books.size(); i++){
@@ -554,7 +612,7 @@ public class BooksProject {
    public void createAuthoringEntity(EntityTransaction tx){
       boolean authoringEntityValid = false;
       while(!authoringEntityValid){
-         AuthoringEntities authoringEntity = this.promptAuthoringEntity();
+         AuthoringEntities authoringEntity = this.promptAuthoringEntity(tx);
          if(authoringEntity != null){
             tx.begin();
             try{
