@@ -123,40 +123,40 @@ public class BooksProject {
    }
 
    public void promptAction(EntityManager em){
-      Scanner in = new Scanner(System.in);
-      boolean optionValid = false;
-      while(!optionValid){
-         System.out.println("What would you like to do? Select an option." +
-                 "\n1. Add new item" +
-                 "\n2. List information about an item" +
-                 "\n3. Delete a book" +
-                 "\n4. Update an existing book" +
-                 "\n5. List primary keys");
-         String userInput = in.nextLine();
-         optionValid = true;
-         switch(userInput){
-            case "1":
-               promptAdd(em);
-               break;
-            case "2":
-               promptList();
-               break;
-            case "3":
-               promptDeleteBook(em);
-               break;
-            case "4":
-               System.out.println(getBooks());
-               promptUpdateBook();
-               System.out.println(getBooks());
-               break;
-            case "5":
-               promptKeys();
-               break;
-            default:
-               System.out.println("None of the options were selected properly, try again!");
-               optionValid = false;
-         }
-      }
+       Scanner in = new Scanner(System.in);
+       boolean optionValid = false;
+       while(!optionValid){
+          System.out.println("What would you like to do? Select an option." +
+                   "\n1. Add new item" +
+                   "\n2. List information about an item" +
+                   "\n3. Delete a book" +
+                   "\n4. Update an existing book" +
+                   "\n5. List primary keys");
+          String userInput = in.nextLine();
+          optionValid = true;
+          switch(userInput){
+              case "1":
+                 promptAdd(em);
+                 break;
+              case "2":
+                 promptList();
+                 break;
+              case "3":
+                 promptDeleteBook(em);
+                 break;
+              case "4":
+                 System.out.println(getBooks());
+                 promptUpdateBook();
+                 System.out.println(getBooks());
+                 break;
+              case "5":
+                 promptKeys();
+                 break;
+              default:
+                 System.out.println("None of the options were selected properly, try again!");
+                 optionValid = false;
+          }
+       }
    }
 
    public void promptAdd(EntityManager em){
@@ -238,7 +238,11 @@ public class BooksProject {
       book.setAuthoringEntity(newAuthoringEntity);
       System.out.println("Book updated.");
    }
-
+/*
+ *Creates a menu for the user to pick one option.
+ *then Lists the primary key of all the row of either publishers, Books or AuthoringEntities depending on what the user picks
+ *@param
+ */
    public void promptKeys(){
       System.out.println("Hello user please select one of the three options:");
       System.out.println("1 - Publishers");
@@ -251,25 +255,29 @@ public class BooksProject {
 
       switch(choice){
          case 1:
+            //if the user picks publishers
             List<Publishers> publishers = this.entityManager.createNamedQuery("ReturnPublisherPrimary",
                     Publishers.class).getResultList();
             publishers.forEach(System.out::println);
             break;
          case 2:
-
+            //if the user picks Books
             List<Books> books = this.entityManager.createNamedQuery("ReturnBooksPrimary",
                     Books.class).getResultList();
             Books.forEach(System.out::println);
             break;
          case 3:
-
+            //if the user picks AuthoringEntities
             List<AuthoringEntities> authoringEntities = this.entityManager.createNamedQuery("ReturnAuthoringEntitiesPrimary",
                     AuthoringEntities.class).getResultList();
             AuthoringEntities.forEach(System.out::println);
             break;
       }
    }
-
+/*
+ *Asks the user for what type of authoring entity they would like to enter.
+ *@param
+ */
    public AuthoringEntities promptAuthoringEntity(){
       Scanner in = new Scanner(System.in);
       AuthoringEntities authoringEntity = null;
@@ -387,13 +395,13 @@ public class BooksProject {
    }
 
    public AuthoringEntities getAuthoringEntity(String email){
-      List<AuthoringEntities> authoringEntities = this.entityManager.createNamedQuery("ReturnAuthoringEntity",
-              AuthoringEntities.class).setParameter(1, email).getResultList();
-      if(authoringEntities.size() == 0){
-         authoringEntities = null;
-      }
-      return authoringEntities.get(0);
-   }
+        List<AuthoringEntities> authoringEntities = this.entityManager.createNamedQuery("ReturnAuthoringEntity",
+                AuthoringEntities.class).setParameter(1, email).getResultList();
+        if(authoringEntities.size() == 0){
+            authoringEntities = null;
+        }
+        return authoringEntities.get(0);
+    }
 
 
    public List<Publishers> getPublishers(){
@@ -406,13 +414,13 @@ public class BooksProject {
    }
 
    public Publishers getPublisher(String name){
-      List<Publishers> publishers = this.entityManager.createNamedQuery("ReturnPublisher",
-              Publishers.class).setParameter(1, name).getResultList();
-      if(publishers.size() == 0){
-         publishers = null;
-      }
-      return publishers.get(0);
-   }
+        List<Publishers> publishers = this.entityManager.createNamedQuery("ReturnPublisher",
+                Publishers.class).setParameter(1, name).getResultList();
+        if(publishers.size() == 0){
+            publishers = null;
+        }
+        return publishers.get(0);
+    }
 
 
    public List<Books> getBooks(){
