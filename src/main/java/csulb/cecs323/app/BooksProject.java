@@ -274,9 +274,9 @@ public class BooksProject {
             break;
       }
    }
-/*
+/**
  *Asks the user for what type of authoring entity they would like to enter.
- *@param
+ *@param non
  */
    public AuthoringEntities promptAuthoringEntity(){
       Scanner in = new Scanner(System.in);
