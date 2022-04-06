@@ -25,7 +25,8 @@ import java.io.Serializable;
                 "FROM BOOKS ",
         resultClass = Books.class
 )
-
+@NamedNativeQuery(name = "ReturnBooksPrimary",
+        query = "SELECT Title,ISBN FROM Books")
 public class Books implements Serializable {
 
     // The ISBN code that identifies a specific book

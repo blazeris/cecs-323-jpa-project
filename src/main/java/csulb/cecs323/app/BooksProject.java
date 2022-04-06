@@ -18,6 +18,7 @@ import csulb.cecs323.model.*;
 import org.apache.derby.iapi.db.Database;
 import org.eclipse.persistence.exceptions.DatabaseException;
 
+import java.util.Arrays;
 import java.util.Scanner;
 import javax.persistence.*;
 import java.util.List;
@@ -204,7 +205,7 @@ public class BooksProject {
                System.out.println(selectBooks());
                break;
             case "3":
-               System.out.println(selectAuthoringEntity());
+               System.out.println(selectAuthoringEntity("WRITING_GROUP"));
                break;
             default:
                System.out.println("None of the options were selected properly, try again!");
@@ -233,40 +234,88 @@ public class BooksProject {
    public void promptUpdateBook(){
       Scanner in = new Scanner(System.in);
       Books book = selectBooks();
-      System.out.println("Enter the updated email: ");
-      String email = in.nextLine();
-      System.out.println("Enter the updated entity type: ");
-      String entityType = in.nextLine();
-      System.out.println("Enter the updated name: ");
-      String name = in.nextLine();
-      System.out.println("Enter the updated head writer: ");
-      String headWriter = in.nextLine();
-      System.out.println("Enter the updated year formed: ");
-      int yearFormed = in.nextInt();
-      //AuthoringEntities newAuthoringEntity = new AuthoringEntities(email, entityType, name, headWriter, yearFormed);
-      //book.setAuthoringEntity(newAuthoringEntity);
+      AuthoringEntities newAuthoringEntity = promptAuthoringEntity();
+      book.setAuthoringEntity(newAuthoringEntity);
       System.out.println("Book updated.");
    }
 
    public void promptKeys(){
+      System.out.println("Hello user please select one of the three options:");
+      System.out.println("1 - Publishers");
+      System.out.println("2 - Books");
+      System.out.println("3 - Authoring entities");
+      Scanner scanchoice = new Scanner(System.in);
+      int choice = scanchoice.nextInt();
 
+
+
+      switch(choice){
+         case 1:
+            List<Publishers> publishers = this.entityManager.createNamedQuery("ReturnPublisherPrimary",
+                    Publishers.class).getResultList();
+            publishers.forEach(System.out::println);
+            break;
+         case 2:
+
+            List<Books> books = this.entityManager.createNamedQuery("ReturnBooksPrimary",
+                    Books.class).getResultList();
+            Books.forEach(System.out::println);
+            break;
+         case 3:
+
+            List<AuthoringEntities> authoringEntities = this.entityManager.createNamedQuery("ReturnAuthoringEntitiesPrimary",
+                    AuthoringEntities.class).getResultList();
+            AuthoringEntities.forEach(System.out::println);
+            break;
+      }
    }
 
    public AuthoringEntities promptAuthoringEntity(){
       Scanner in = new Scanner(System.in);
       AuthoringEntities authoringEntity = null;
-      System.out.println("Please enter the authoringEntity's email: ");
-      String email = in.nextLine();
-      System.out.println("Please enter the authoringEntity's name: ");
-      String name = in.nextLine();
-      System.out.println("Please enter the authoringEntity's headWriter: ");
-      String headWriter = in.nextLine();
-      System.out.println("Please enter the authoringEntity's year of formation: ");
-      String userInput = in.nextLine();
-      int yearFormed = Integer.parseInt(userInput);
-      System.out.println("Please enter the authoringEntity's type: ");
-      String authoringEntityType = in.nextLine();
-      //authoringEntity = new AuthoringEntities(email, authoringEntityType, headWriter, name, yearFormed);
+
+      boolean optionValid = false;
+
+      while(!optionValid){
+         System.out.println("What type of authoring entity would you like to add? Select an option." +
+                 "\n1. Writing Group" +
+                 "\n2. Individual Author" +
+                 "\n3. Ad Hoc Team" +
+                 "\n4. Add to an Individual Author to a Writing Group");
+         String userInput = in.nextLine();
+         String[] options = {"1", "2", "3"};
+
+         if(Arrays.asList(options).contains(userInput)){
+            optionValid = true;
+
+            System.out.println("Please enter email: ");
+            String email = in.nextLine();
+            System.out.println("Please enter the name: ");
+            String name = in.nextLine();
+
+            switch(userInput){
+               case "1":
+                  System.out.println("Please enter the head writer name: ");
+                  String headWriter = in.nextLine();
+                  System.out.println("Please enter the year of formation: ");
+                  int yearFormed = Integer.parseInt(in.nextLine());
+                  authoringEntity = new WritingGroup(email, name, headWriter, yearFormed);
+                  break;
+               case "2":
+                  authoringEntity = new IndividualAuthor(email, name);
+                  break;
+               case "3":
+                  authoringEntity = new AdHocTeam(email, name);
+                  break;
+               case "4":
+
+                  break;
+            }
+         }
+         else {
+            System.out.println("None of the options were selected properly, try again!");
+         }
+      }
       return authoringEntity;
    }
 
@@ -328,9 +377,9 @@ public class BooksProject {
 
 
 
-   public List<AuthoringEntities> getAuthoringEntities(){
+   public List<AuthoringEntities> getAuthoringEntities(String authoringEntityType){
       List<AuthoringEntities> authoringEntities = this.entityManager.createNamedQuery("ReturnAuthoringEntities",
-              AuthoringEntities.class).getResultList();
+              AuthoringEntities.class).setParameter(1, authoringEntityType).getResultList();
       if(authoringEntities.size() == 0){
          authoringEntities = null;
       }
@@ -386,13 +435,34 @@ public class BooksProject {
 
 
 
-   public AuthoringEntities selectAuthoringEntity(){
+   public String selectAuthoringEntityType(){
+      List<String> types =
+   }
+
+   public AuthoringEntities selectAuthoringEntity(String authoringEntityType){
       Scanner in = new Scanner(System.in);
       AuthoringEntities authoringEntity = null;
+
+      boolean authoringEntityTypeValid = true;
+      String authoringEntityTypeFormatted = "";
+      switch(authoringEntityType){
+         case "AD_HOC_TEAM":
+            authoringEntityTypeFormatted = "Ad Hoc Team";
+            break;
+         case "INDIVIDUAL_AUTHOR":
+            authoringEntityTypeFormatted = "Individual Author";
+            break;
+         case "WRITING_GROUP":
+            authoringEntityTypeFormatted = "Writing Group";
+            break;
+         default:
+            authoringEntityTypeValid = false;
+      }
+
       boolean authoringEntityValid = false;
-      while(!authoringEntityValid){
-         System.out.println("Select the number of the corresponding authoring entity");
-         List<AuthoringEntities> authoringEntities = getAuthoringEntities();
+      while(!authoringEntityValid && authoringEntityTypeValid){
+         System.out.println("Select the number of the corresponding " + authoringEntityTypeFormatted);
+         List<AuthoringEntities> authoringEntities = getAuthoringEntities(authoringEntityType);
          if(authoringEntities != null){
             for(int i = 1; i <= authoringEntities.size(); i++){
                System.out.printf("%s. %s\n", i, authoringEntities.get(i - 1));

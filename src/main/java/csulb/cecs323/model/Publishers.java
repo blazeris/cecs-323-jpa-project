@@ -30,6 +30,8 @@ import java.util.Objects;
                 "WHERE NAME = ? ",
         resultClass = Publishers.class
 )
+@NamedNativeQuery(name = "ReturnPublisherPrimary",
+        query = "SELECT name FROM Publishers")
 public class Publishers {
     // The name of the publisher
     @Id

@@ -22,11 +22,14 @@ import java.util.Objects;
 @NamedNativeQuery(
         name = "ReturnAuthoringEntities",
         query = "SELECT * " +
-                "FROM AUTHORING_ENTITIES ",
+                "FROM AUTHORING_ENTITIES " +
+        "WHERE AUTHORING_ENTITY_TYPE = ? ",
         resultClass = AuthoringEntities.class
 )
+@NamedNativeQuery(name = "ReturnAuthoringEntitiesPrimary",
+        query = "SELECT email, authoring_entity_type FROM AuthoringEntities")
 @Inheritance
-@DiscriminatorColumn(name = "authoring_entity_type", columnDefinition = "CHAR(31)")
+@DiscriminatorColumn(name = "AUTHORING_ENTITY_TYPE", columnDefinition = "CHAR(31)")
 public abstract class AuthoringEntities {
     // The email associated with the authoring entity
     @Id
