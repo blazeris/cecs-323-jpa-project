@@ -3,6 +3,9 @@ import javax.persistence.*;
 import java.util.Objects;
 @Entity
 @Table(name = "AD_HOC_TEAM_MEMBERS")
+/**
+ * Association class between Individual Authors and Ad Hoc Team that represents the authors part of a team
+ */
 public class AdHocTeamMembers {
     //individual authors email
     @Id
@@ -23,8 +26,8 @@ public class AdHocTeamMembers {
     }
     /**
      *Arguments constructor
-     *@param IndividualAuthorsEmail
-     *@param AdHocTeamsEmail
+     *@param individualAuthorsEmail The author that is being added
+     *@param adHocTeamsEmail The team to add to
      **/
     public AdHocTeamMembers(IndividualAuthor individualAuthorsEmail, AdHocTeam adHocTeamsEmail){
     this.individualAuthorsEmail = individualAuthorsEmail;

@@ -153,8 +153,10 @@ public class Books implements Serializable {
         return title;
     }
 
-
-
+    /**
+     * Gives more detailed information about the book
+     * @return detailed information about the book
+     */
     public String info(){
         return "ISBN: " + ISBN + "\tTitle: " + title +
                 "\nPublisher: " + publisher.info() + "\nAuthoring Entity: " + authoringEntity.info();

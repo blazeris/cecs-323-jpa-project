@@ -120,6 +120,10 @@ public class Publishers {
         return name;
     }
 
+    /**
+     * Gives more detailed information about the publisher
+     * @return detailed information about the publisher
+     */
     public String info() {
         return "Name: " + name +
                 "\tEmail: " + email +
