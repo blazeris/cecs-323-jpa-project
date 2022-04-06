@@ -60,6 +60,10 @@ public class BooksProject {
       this.entityManager = manager;
    }
 
+    /**
+     * Main driver
+     * @param args
+     */
    public static void main(String[] args) {
       LOGGER.fine("Creating EntityManagerFactory and EntityManager");
       EntityManagerFactory factory = Persistence.createEntityManagerFactory("BooksProject");
@@ -115,13 +119,20 @@ public class BooksProject {
    } // End of createEntity member method
 
 
-
+    /**
+     * Creates and persists singular entity
+     * @param entity The entity to persist
+     */
    public <E> void createEntity(E entity){
       LOGGER.info("Persisting: " + entity);
       this.entityManager.persist(entity);
       LOGGER.info("Persisted object after flush (non-null id): " + entity);
    }
 
+    /**
+     * Prompts the user to perform an action
+     * @param em The entity manager
+     */
    public void promptAction(EntityManager em){
        Scanner in = new Scanner(System.in);
        boolean optionValid = false;
@@ -136,7 +147,7 @@ public class BooksProject {
           optionValid = true;
           switch(userInput){
               case "1":
-                 promptAdd(em);
+                 promptAdd(em.getTransaction());
                  break;
               case "2":
                  promptList();
@@ -159,8 +170,11 @@ public class BooksProject {
        }
    }
 
-   public void promptAdd(EntityManager em){
-      EntityTransaction tx = em.getTransaction();
+    /**
+     * Prompts the user to add and create a new object
+     * @param tx The transaction manager
+     */
+   public void promptAdd(EntityTransaction tx){
       Scanner in = new Scanner(System.in);
       boolean optionValid = false;
       while(!optionValid){
@@ -187,6 +201,9 @@ public class BooksProject {
       }
    }
 
+    /**
+     * Prompts the user to select an object to list information about
+     */
    public void promptList(){
       Scanner in = new Scanner(System.in);
       boolean optionValid = false;
@@ -223,6 +240,10 @@ public class BooksProject {
       }
    }
 
+    /**
+     * Prompts the user to select a book to delete
+     * @param em The entity manager to allow us to delete
+     */
    public void promptDeleteBook(EntityManager em){
       System.out.println("\nSelect a book to delete.");
       Books book = selectBooks();
@@ -240,6 +261,9 @@ public class BooksProject {
 
    }
 
+    /**
+     * Prompts the user to select a book to update with a new authoring entity
+     */
    public void promptUpdateBook(){
       Scanner in = new Scanner(System.in);
       Books book = selectBooks();
@@ -252,6 +276,9 @@ public class BooksProject {
       }
    }
 
+    /**
+     * Prompts the user to select an object to list the primary keys of
+     */
    public void promptKeys(){
       System.out.println("\nHello user please select one of the three options:");
       System.out.println("1 - Publishers");
@@ -285,6 +312,11 @@ public class BooksProject {
       }
    }
 
+    /**
+     * Prompts the user to create a new authoring entity, or add an author to an ad hoc team
+     * @param tx The transaction manager
+     * @return The created authoring entity
+     */
    public AuthoringEntities promptAuthoringEntity(EntityTransaction tx){
       Scanner in = new Scanner(System.in);
       AuthoringEntities authoringEntity = null;
@@ -348,6 +380,10 @@ public class BooksProject {
       return authoringEntity;
    }
 
+    /**
+     * Prompts the user to create a new publisher
+     * @return The created publisher
+     */
    public Publishers promptPublisher(){
       Scanner in = new Scanner(System.in);
       Publishers publisher = null;
@@ -361,6 +397,10 @@ public class BooksProject {
       return publisher;
    }
 
+    /**
+     * Prompts the user to create a new book
+     * @return The created book
+     */
    public Books promptBook(){
       Scanner in = new Scanner(System.in);
       Books book = null;
@@ -405,7 +445,11 @@ public class BooksProject {
    }
 
 
-
+    /**
+     * Gets all the authoring entities of a specific type from the database
+     * @param authoringEntityType The specific type of authoring entity (individual author, writing group, or ad hoc team)
+     * @return The list of acquired authoring entities
+     */
    public List<AuthoringEntities> getAuthoringEntities(String authoringEntityType){
       List<AuthoringEntities> authoringEntities = this.entityManager.createNamedQuery("ReturnAuthoringEntities",
               AuthoringEntities.class).setParameter(1, authoringEntityType).getResultList();
@@ -415,16 +459,10 @@ public class BooksProject {
       return authoringEntities;
    }
 
-   public AuthoringEntities getAuthoringEntity(String email){
-        List<AuthoringEntities> authoringEntities = this.entityManager.createNamedQuery("ReturnAuthoringEntity",
-                AuthoringEntities.class).setParameter(1, email).getResultList();
-        if(authoringEntities.size() == 0){
-            authoringEntities = null;
-        }
-        return authoringEntities.get(0);
-    }
-
-
+    /**
+     * Gets all the publishers from the database
+     * @return The acquired publisher
+     */
    public List<Publishers> getPublishers(){
       List<Publishers> publishers = this.entityManager.createNamedQuery("ReturnPublishers",
               Publishers.class).getResultList();
@@ -434,16 +472,10 @@ public class BooksProject {
       return publishers;
    }
 
-   public Publishers getPublisher(String name){
-        List<Publishers> publishers = this.entityManager.createNamedQuery("ReturnPublisher",
-                Publishers.class).setParameter(1, name).getResultList();
-        if(publishers.size() == 0){
-            publishers = null;
-        }
-        return publishers.get(0);
-    }
-
-
+    /**
+     * Gets all books from the database
+     * @return The list of acquired books
+     */
    public List<Books> getBooks(){
       List<Books> books = this.entityManager.createNamedQuery("ReturnBooks",
               Books.class).getResultList();
@@ -453,17 +485,10 @@ public class BooksProject {
       return books;
    }
 
-   public Books getBook(String ISBN){
-      List<Books> books = this.entityManager.createNamedQuery("ReturnBook",
-              Books.class).setParameter(1, ISBN).getResultList();
-      if(books.size() == 0){
-         books = null;
-      }
-      return books.get(0);
-   }
-
-
-
+    /**
+     * Prompts the user to select a type of authoring entity (individual author, writing group, or ad hoc team)
+     * @return The type of authoring entity
+     */
    public String selectAuthoringEntityType(){
       Scanner in = new Scanner(System.in);
       boolean optionValid = false;
@@ -493,10 +518,19 @@ public class BooksProject {
       return authoringEntityType;
    }
 
+    /**
+     * Prompts the user to select an authoring entity without knowing the authoring entity type
+     * @return The authoring entity that the user has selected
+     */
    public AuthoringEntities selectAuthoringEntity(){
       return selectAuthoringEntity(selectAuthoringEntityType());
    }
 
+    /**
+     * Prompts the user to select an authoring entity
+     * @param authoringEntityType The type of authoring entity to select
+     * @return The authoring entity that the user has selected
+     */
    public AuthoringEntities selectAuthoringEntity(String authoringEntityType){
       Scanner in = new Scanner(System.in);
       AuthoringEntities authoringEntity = null;
@@ -545,6 +579,10 @@ public class BooksProject {
       return authoringEntity;
    }
 
+    /**
+     * Prompts the user to select a publisher from all publishers in the database
+     * @return The publisher that the user has selected
+     */
    public Publishers selectPublisher(){
       Scanner in = new Scanner(System.in);
       Publishers publisher = null;
@@ -576,6 +614,10 @@ public class BooksProject {
       return publisher;
    }
 
+    /**
+     * Prompts the user to select a book from all books in the database
+     * @return The book that the user has selected
+     */
    public Books selectBooks(){
       Scanner in = new Scanner(System.in);
       Books book = null;
@@ -607,8 +649,10 @@ public class BooksProject {
       return book;
    }
 
-
-
+    /**
+     * Creates an authoring entity and adds it to the database
+     * @param tx The transaction manager
+     */
    public void createAuthoringEntity(EntityTransaction tx){
       boolean authoringEntityValid = false;
       while(!authoringEntityValid){
@@ -628,6 +672,10 @@ public class BooksProject {
       }
    }
 
+    /**
+     * Creates a publisher and adds it to the database
+     * @param tx The transaction manager
+     */
    public void createPublisher(EntityTransaction tx){
       boolean publisherValid = false;
       while(!publisherValid){
@@ -647,6 +695,10 @@ public class BooksProject {
       }
    }
 
+    /**
+     * Creates a book and adds it to the database
+     * @param tx The transaction manager
+     */
    public void createBook(EntityTransaction tx){
       boolean bookValid = false;
       while(!bookValid){
