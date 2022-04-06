@@ -39,22 +39,22 @@ public class Publishers {
     private String name;
 
     // The email of the publisher
-    @Column(nullable=false, length = 80)  
+    @Column(nullable=false, length = 80)
     private String email;
 
     // The phone number of the publisher
     @Column(nullable=false, length = 24)
     private String phone;
 
-   
+
     /**
-    * Null constructor
-    */
+     * Null constructor
+     */
     public Publishers() {
 
-    } 
+    }
 
-  
+
     /**
      * Arguments constructor
      * @param name
@@ -62,7 +62,7 @@ public class Publishers {
      * @param phone
      */
     public Publishers (String name, String email, String phone) {
-        this.name = name;        
+        this.name = name;
         this.email = email;
         this.phone = phone;
     }
@@ -91,6 +91,11 @@ public class Publishers {
         this.phone = phone;
     }
 
+    /**
+     * Function to check if publisher name is equal to object passed
+     * @param o Object being checked for equivalence
+     * @return Whether or not object is equal
+     */
     @Override
     public boolean equals(Object o){
         boolean results = false;
@@ -106,16 +111,23 @@ public class Publishers {
         return results;
     }
 
+    /**
+     * String representation of publisher's name, email, and phone number
+     * @return Publisher's name, email, and phone number
+     */
     @Override
     public String toString() {
         return "Name: " + name +
                 "\tEmail: " + email +
                 "\tPhone Number: " + phone;
     }
+
+    /**
+     * Function to map the publisher name, the primary key
+     * @return hash map
+     */
     @Override
     public int hashCode() {
         return Objects.hash(this.getName());
     }
 }
-
-
