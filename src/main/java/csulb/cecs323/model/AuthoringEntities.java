@@ -17,13 +17,13 @@ import java.util.Objects;
 @Entity
 @Table(name = "AUTHORING_ENTITIES",
         uniqueConstraints = {
-            @UniqueConstraint(name = "authoring_entities_unique_01", columnNames = {"name", "email"})
-})
+                @UniqueConstraint(name = "authoring_entities_unique_01", columnNames = {"name", "email"})
+        })
 @NamedNativeQuery(
         name = "ReturnAuthoringEntities",
         query = "SELECT * " +
                 "FROM AUTHORING_ENTITIES " +
-        "WHERE AUTHORING_ENTITY_TYPE = ? ",
+                "WHERE AUTHORING_ENTITY_TYPE = ? ",
         resultClass = AuthoringEntities.class
 )
 @NamedNativeQuery(name = "ReturnAuthoringEntitiesPrimary",
@@ -48,18 +48,18 @@ public abstract class AuthoringEntities {
     @Column()
     private int yearFormed;
 
-   
+
     /**
-    * Null constructor
-    */
+     * Null constructor
+     */
     public AuthoringEntities() {
 
     }
 
     /**
      * Authoring Entity constructor
-     * @param email
-     * @param name
+     * @param email The email address of the authoring entity
+     * @param name The name of the authoring entity
      */
     public AuthoringEntities (String email, String name) {
         this.email = email;
@@ -70,18 +70,19 @@ public abstract class AuthoringEntities {
 
     /**
      * Writing group constructor
-     * @param email
-     * @param name
-     * @param headWriter
-     * @param yearFormed
+     * @param email The email address of the authoring entity
+     * @param name The name of the authoring entity
+     * @param headWriter The head writer of the authoring entity
+     * @param yearFormed The year the entity was formed
      */
     public AuthoringEntities (String email, String name,
-                      String headWriter, int yearFormed) {
+                              String headWriter, int yearFormed) {
         this.email = email;
         this.name = name;
         this.headWriter = headWriter;
         this.yearFormed = yearFormed;
     }
+
 
     public String getEmail() {
         return email;
@@ -116,11 +117,20 @@ public abstract class AuthoringEntities {
     }
 
 
+    /**
+     * toString function for email address
+     * @return email address of authoring entity
+     */
     @Override
     public String toString () {
         return email;
     }
 
+    /**
+     * Function to check if email is equal to object passed
+     * @param o Object being checked for equivalence
+     * @return Whether or not object is equal
+     */
     @Override
     public boolean equals(Object o){
         boolean results = false;
@@ -136,6 +146,10 @@ public abstract class AuthoringEntities {
         return results;
     }
 
+    /**
+     * Function to map email, the primary key
+     * @return hash map
+     */
     @Override
     public int hashCode() {
         return Objects.hash(this.getEmail());
